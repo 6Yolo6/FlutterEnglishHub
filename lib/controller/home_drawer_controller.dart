@@ -1,10 +1,12 @@
-import 'package:flutter_english_hub/app_theme.dart';
-import 'package:flutter_english_hub/drawer/home_drawer.dart';
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter_english_hub/theme/app_theme.dart';
+import 'package:flutter_english_hub/page/drawer/home_drawer.dart';
 import 'package:flutter/material.dart';
 
-class DrawerUserController extends StatefulWidget {
-  const DrawerUserController({
-    Key? key,
+class HomeDrawerController extends StatefulWidget {
+  const HomeDrawerController({
+    super.key,
     this.drawerWidth = 250,
     this.onDrawerCall,
     this.screenView,
@@ -12,7 +14,7 @@ class DrawerUserController extends StatefulWidget {
     this.menuView,
     this.drawerIsOpen,
     this.screenIndex,
-  }) : super(key: key);
+  });
 
   final double drawerWidth;
   final Function(DrawerIndex)? onDrawerCall;
@@ -23,10 +25,10 @@ class DrawerUserController extends StatefulWidget {
   final DrawerIndex? screenIndex;
 
   @override
-  _DrawerUserControllerState createState() => _DrawerUserControllerState();
+  _HomeDrawerControllerState createState() => _HomeDrawerControllerState();
 }
 
-class _DrawerUserControllerState extends State<DrawerUserController>
+class _HomeDrawerControllerState extends State<HomeDrawerController>
     with TickerProviderStateMixin {
   ScrollController? scrollController;
   AnimationController? iconAnimationController;
@@ -41,13 +43,13 @@ class _DrawerUserControllerState extends State<DrawerUserController>
     iconAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 0));
     iconAnimationController
-      ?..animateTo(1.0,
+      ?.animateTo(1.0,
           duration: const Duration(milliseconds: 0),
           curve: Curves.fastOutSlowIn);
     scrollController =
         ScrollController(initialScrollOffset: widget.drawerWidth);
     scrollController!
-      ..addListener(() {
+      .addListener(() {
         if (scrollController!.offset <= 0) {
           if (scrolloffset != 1.0) {
             setState(() {
@@ -119,9 +121,10 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                       transform: Matrix4.translationValues(
                           scrollController!.offset, 0.0, 0.0),
                       child: HomeDrawer(
-                        screenIndex: widget.screenIndex == null
-                            ? DrawerIndex.HOME
-                            : widget.screenIndex,
+                        // screenIndex: widget.screenIndex == null
+                        //     ? DrawerIndex.HOME
+                        //     : widget.screenIndex,
+                        screenIndex: widget.screenIndex,
                         iconAnimationController: iconAnimationController,
                         callBackIndex: (DrawerIndex indexType) {
                           onDrawerClick();
@@ -223,3 +226,4 @@ class _DrawerUserControllerState extends State<DrawerUserController>
     }
   }
 }
+

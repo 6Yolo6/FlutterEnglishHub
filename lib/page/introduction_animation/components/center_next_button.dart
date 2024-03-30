@@ -1,15 +1,21 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:get/get.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_english_hub/page/auth/login.dart';
+import 'package:flutter_english_hub/page/auth/sign_up.dart';
+import 'package:get_storage/get_storage.dart';
+
 
 class CenterNextButton extends StatelessWidget {
   final AnimationController animationController;
   final VoidCallback onNextClick;
   const CenterNextButton(
-      {Key? key, required this.animationController, required this.onNextClick})
-      : super(key: key);
+      {super.key, required this.animationController, required this.onNextClick});
 
   @override
   Widget build(BuildContext context) {
+    
     final _topMoveAnimation =
         Tween<Offset>(begin: Offset(0, 5), end: Offset(0, 0))
             .animate(CurvedAnimation(
@@ -20,15 +26,18 @@ class CenterNextButton extends StatelessWidget {
         curve: Curves.fastOutSlowIn,
       ),
     ));
+    
     final _signUpMoveAnimation =
         Tween<double>(begin: 0, end: 1.0).animate(CurvedAnimation(
       parent: animationController,
+      // ignore: prefer_const_constructors
       curve: Interval(
         0.6,
         0.8,
         curve: Curves.fastOutSlowIn,
       ),
     ));
+    // ignore: no_leading_underscores_for_local_identifiers
     final _loginTextMoveAnimation =
         Tween<Offset>(begin: Offset(0, 5), end: Offset(0, 0))
             .animate(CurvedAnimation(
@@ -49,6 +58,7 @@ class CenterNextButton extends StatelessWidget {
         children: [
           SlideTransition(
             position: _topMoveAnimation,
+            // 控制动画的透明度
             child: AnimatedBuilder(
               animation: animationController,
               builder: (context, child) => AnimatedOpacity(
@@ -61,6 +71,7 @@ class CenterNextButton extends StatelessWidget {
               ),
             ),
           ),
+          // 控制动画的移动
           SlideTransition(
             position: _topMoveAnimation,
             child: AnimatedBuilder(
@@ -86,16 +97,21 @@ class CenterNextButton extends StatelessWidget {
                     ) {
                       return SharedAxisTransition(
                         fillColor: Colors.transparent,
-                        child: child,
                         animation: animation,
                         secondaryAnimation: secondaryAnimation,
                         transitionType: SharedAxisTransitionType.vertical,
+                        child: child,
                       );
                     },
                     child: _signUpMoveAnimation.value > 0.7
                         ? InkWell(
                             key: ValueKey('Sign Up button'),
-                            onTap: onNextClick,
+                            onTap: () {
+                              GetStorage().write('isFirstTime', false); // 更新标志位
+                              // 跳转到注册页面
+                              // Get.toNamed('/sign_up');
+                              Get.to(() => SignUpPage(), transition: Transition.cupertino);
+                            },
                             child: Padding(
                               padding: EdgeInsets.only(left: 16.0, right: 16.0),
                               child: Row(
@@ -135,6 +151,7 @@ class CenterNextButton extends StatelessWidget {
             child: SlideTransition(
               position: _loginTextMoveAnimation,
               child: Row(
+                // 居中对齐
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -145,12 +162,20 @@ class CenterNextButton extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
-                  Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Color(0xff132137),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  InkWell(
+                    onTap: () {
+                      GetStorage().write('isFirstTime', false); // 更新标志位
+                      // 跳转到登录页面
+                      // Get.toNamed('/login');
+                      Get.to(() => LoginPage(), transition: Transition.cupertino);
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Color(0xff132137),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

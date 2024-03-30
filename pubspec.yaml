@@ -46,7 +46,8 @@ dependencies:
   # bottom_navy_bar-底部导航栏
   bottom_navy_bar: ^6.0.0
   # get-状态管理
-  get: ^4.3.8
+  get: ^4.6.1
+  get_storage: ^2.0.3
   # dio-网络请求
   dio: ^4.0.0
   # shared_preferences-本地存储

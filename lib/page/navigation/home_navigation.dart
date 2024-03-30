@@ -1,15 +1,18 @@
-import 'package:flutter_english_hub/app_theme.dart';
-import 'package:flutter_english_hub/drawer/controller.dart';
-import 'package:flutter_english_hub/drawer/home_drawer.dart';
-import 'package:flutter_english_hub/sidebar/feedback_screen.dart';
-import 'package:flutter_english_hub/sidebar/help_screen.dart';
-import 'package:flutter_english_hub/sidebar/home_screen.dart';
-import 'package:flutter_english_hub/sidebar/invite_friend_screen.dart';
+import 'package:flutter_english_hub/theme/app_theme.dart';
+import 'package:flutter_english_hub/controller/home_drawer_controller.dart';
+import 'package:flutter_english_hub/page/drawer/home_drawer.dart';
+import 'package:flutter_english_hub/page/drawer/feedback_screen.dart';
+import 'package:flutter_english_hub/page/drawer/help_screen.dart';
+import 'package:flutter_english_hub/page/home_screen.dart';
+import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeNavigation extends StatefulWidget {
+  const HomeNavigation({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomeNavigationState createState() => _HomeNavigationState();
 }
 
@@ -23,7 +26,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
   void initState() {
     // 初始化为首页home
     drawerIndex = DrawerIndex.HOME;
-    screenView = const MyHomePage();
+    screenView = MyHomePage();
     super.initState();
   }
 
@@ -36,7 +39,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
         bottom: false,
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
-          body: DrawerUserController(
+          body: HomeDrawerController(
             screenIndex: drawerIndex,
             drawerWidth: MediaQuery.of(context).size.width * 0.75,
             onDrawerCall: (DrawerIndex drawerIndexdata) {
@@ -90,17 +93,17 @@ class _HomeNavigationState extends State<HomeNavigation> {
     if (drawerIndex != drawerIndexdata) {
       drawerIndex = drawerIndexdata;
       switch (drawerIndex) {
-        case DrawerIndex.HOME:
-          Get.offAll(() => const MyHomePage());
-          break;
+        // case DrawerIndex.HOME:
+        //   Get.to(() => MyHomePage());
+        //   break;
         case DrawerIndex.Help:
-          Get.offAll(() => HelpScreen());
+          Get.to(() => HelpScreen());
           break;
         case DrawerIndex.FeedBack:
-          Get.offAll(() => FeedbackScreen());
+          Get.to(() => FeedbackScreen());
           break;
         case DrawerIndex.Invite:
-          Get.offAll(() => InviteFriend());
+          Get.to(() => InviteFriendScreen());
           break;
         default:
           break;

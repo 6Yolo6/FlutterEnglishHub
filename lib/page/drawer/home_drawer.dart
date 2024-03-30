@@ -1,5 +1,7 @@
-import 'package:flutter_english_hub/app_theme.dart';
+import 'package:flutter_english_hub/service/auth_service.dart';
+import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -9,8 +11,11 @@ class HomeDrawer extends StatefulWidget {
       this.callBackIndex})
       : super(key: key);
 
+  // 控制侧边栏顶部用户信息的动画
   final AnimationController? iconAnimationController;
+  // 侧边栏当前选中的抽屉菜单项
   final DrawerIndex? screenIndex;
+  // 侧边栏抽屉菜单项点击事件回调
   final Function(DrawerIndex)? callBackIndex;
 
   @override
@@ -25,13 +30,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
     super.initState();
   }
 
+  // 初始化侧边栏抽屉菜单项
   void setDrawerListArray() {
     drawerList = <DrawerList>[
-      DrawerList(
-        index: DrawerIndex.HOME,
-        labelName: 'Home',
-        icon: Icon(Icons.home),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.HOME,
+      //   labelName: 'Home',
+      //   icon: Icon(Icons.home),
+      // ),
       DrawerList(
         index: DrawerIndex.Help,
         labelName: 'Help黄裕锋牛逼66',
@@ -67,124 +73,136 @@ class _HomeDrawerState extends State<HomeDrawer> {
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 40.0),
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  AnimatedBuilder(
-                    animation: widget.iconAnimationController!,
-                    builder: (BuildContext context, Widget? child) {
-                      return ScaleTransition(
-                        scale: AlwaysStoppedAnimation<double>(1.0 -
-                            (widget.iconAnimationController!.value) * 0.2),
-                        child: RotationTransition(
-                          turns: AlwaysStoppedAnimation<double>(Tween<double>(
-                                      begin: 0.0, end: 24.0)
-                                  .animate(CurvedAnimation(
-                                      parent: widget.iconAnimationController!,
-                                      curve: Curves.fastOutSlowIn))
-                                  .value /
-                              360),
-                          child: Container(
-                            height: 120,
-                            width: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                    color: AppTheme.grey.withOpacity(0.6),
-                                    offset: const Offset(2.0, 4.0),
-                                    blurRadius: 8),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(60.0)),
-                              child: Image.asset('assets/images/userImage.png'),
+      body: Obx(() {
+        var user = Get.find<AuthService>().user.value;
+        return Column(
+          // 侧边栏内容垂直排列
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // 侧边栏内容主轴对齐方式，从头部开始
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(top: 40.0),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    // 用户头像动画
+                    AnimatedBuilder(
+                      animation: widget.iconAnimationController!,
+                      builder: (BuildContext context, Widget? child) {
+                        // 缩放动画
+                        return ScaleTransition(
+                          scale: AlwaysStoppedAnimation<double>(1.0 -
+                              (widget.iconAnimationController!.value) * 0.2),
+                          child: RotationTransition(
+                            turns: AlwaysStoppedAnimation<double>(Tween<double>(
+                                        begin: 0.0, end: 24.0)
+                                    .animate(CurvedAnimation(
+                                        parent: widget.iconAnimationController!,
+                                        curve: Curves.fastOutSlowIn))
+                                    .value /
+                                360),
+                            child: Container(
+                              height: 120,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: AppTheme.grey.withOpacity(0.6),
+                                      offset: const Offset(2.0, 4.0),
+                                      blurRadius: 8),
+                                ],
+                              ),
+                              // 用户头像
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(60.0)),
+                                child: user != null
+                                    ? Image.network(user.avatar)
+                                    : Image.asset(
+                                        'assets/images/userImage.png'),
+                              ),
                             ),
                           ),
+                        );
+                      },
+                    ),
+                    // 用户名
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, left: 4),
+                      child: Text(
+                        user != null ? user.username : '游客',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isLightMode ? AppTheme.grey : AppTheme.white,
+                          fontSize: 18,
                         ),
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 4),
-                    child: Text(
-                      'Chris Hemsworth',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isLightMode ? AppTheme.grey : AppTheme.white,
-                        fontSize: 18,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Divider(
-            height: 1,
-            color: AppTheme.grey.withOpacity(0.6),
-          ),
-          Expanded(
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(0.0),
-              itemCount: drawerList?.length,
-              itemBuilder: (BuildContext context, int index) {
-                return inkwell(drawerList![index]);
-              },
+            const SizedBox(
+              height: 4,
             ),
-          ),
-          Divider(
-            height: 1,
-            color: AppTheme.grey.withOpacity(0.6),
-          ),
-          Column(
-            children: <Widget>[
-              ListTile(
-                title: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    fontFamily: AppTheme.fontName,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: AppTheme.darkText,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-                trailing: Icon(
-                  Icons.power_settings_new,
-                  color: Colors.red,
-                ),
-                onTap: () {
-                  onTapped();
+            Divider(
+              height: 1,
+              color: AppTheme.grey.withOpacity(0.6),
+            ),
+            Expanded(
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(0.0),
+                itemCount: drawerList?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return inkwell(drawerList![index]);
                 },
               ),
-              SizedBox(
-                height: MediaQuery.of(context).padding.bottom,
-              )
-            ],
-          ),
-        ],
-      ),
+            ),
+            Divider(
+              height: 1,
+              color: AppTheme.grey.withOpacity(0.6),
+            ),
+            Column(
+              children: <Widget>[
+                ListTile(
+                  title: Text(
+                    'Sign Out',
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontName,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: AppTheme.darkText,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                  trailing: Icon(
+                    Icons.power_settings_new,
+                    color: Colors.red,
+                  ),
+                  onTap: () {
+                    onTapped();
+                  },
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).padding.bottom,
+                )
+              ],
+            ),
+          ],
+        );
+      }),
     );
   }
 
   void onTapped() {
-    print('Doing Something...'); // Print to console.
+    print('sign out'); // Print to console.
   }
 
   Widget inkwell(DrawerList listData) {
