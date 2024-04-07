@@ -14,11 +14,9 @@ class GridViewPage extends StatelessWidget {
     Get.find<AuthController>();
     // 展示HomeList的内容
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("Home"),
-      // ),
       body: GridView.builder(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(
+                                top: 0, left: 12, right: 12),
         itemCount: HomeList.homeList.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // 一行显示两个元素

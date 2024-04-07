@@ -12,27 +12,25 @@ class CustomBottomNavigationBar extends StatelessWidget {
         currentIndex: controller.selectedIndex.value, // 监听selectedIndex的变化
         onTap:(index) {
           controller.changePage(index);
-          String currentPage = controller.getCurrentPage();
-          print(currentPage);  // 输出当前页面的名称
-        }, // 点击时调用NavigationController中的方法
+        }, 
         selectedItemColor: Colors.blue, // 选中时的颜色
         unselectedItemColor: Colors.grey, // 未选中时的颜色
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.hub),
             label: 'Hub',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
+            icon: Icon(Icons.g_translate),
             label: 'translation',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
+            icon: Icon(Icons.notes),
             label: 'note',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'learning',
+            icon: Icon(Icons.book),
+            label: 'word',
           ),
         ],
       ),

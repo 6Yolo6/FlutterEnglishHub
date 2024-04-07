@@ -13,6 +13,8 @@ import 'package:flutter_english_hub/page/navigation/home_navigation.dart';
 import 'package:flutter_english_hub/page/drawer/feedback_screen.dart';
 import 'package:flutter_english_hub/page/drawer/help_screen.dart';
 import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
+import 'package:flutter_english_hub/page/translation/translation.dart';
+
 
 // final List<Map<String, String>> routeList = [
 //   // 介绍页面
@@ -38,71 +40,89 @@ import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
 //   // 邀请好友页面
 //   {'name': 'INVITE_FRIEND', 'route': '/invite_friend'},
 // ];
-final List<Map<String, String>> routeList = [
-  {'name': 'introduction', 'route': '/introduction'},
-  {'name': 'home', 'route': '/home'},
-  {'name': 'home_navigation', 'route': '/home_navigation'},
-  {'name': 'login', 'route': '/login'},
-  {'name': 'sign_up', 'route': '/sign_up'},
-  {'name': 'listening', 'route': '/listening'},
-  {'name': 'reading', 'route': '/reading'},
-  {'name': 'writing', 'route': '/writing'},
-  {'name': 'feedback', 'route': '/feedback'},
-  {'name': 'help', 'route': '/help'},
-  {'name': 'invite_friend', 'route': '/invite_friend'},
-];
+
 
 class Routes {
+  // 介绍页面
+  static String introduction = '/introduction';
+  // 首页
+  static String home = '/home';
+  // 首页导航
+  static String homeNavigation = '/home_navigation';
+  // 登录页面
+  static String login = '/login';
+  // 注册页面
+  static String signUp = '/sign_up';
+  // 听力页面
+  static String listening = '/listening';
+  // 阅读页面
+  static String reading = '/reading';
+  // 写作页面
+  static String writing = '/writing';
+  // 反馈页面
+  static String feedback = '/feedback';
+  // 帮助页面
+  static String help = '/help';
+  // 邀请好友页面
+  static String inviteFriend = '/invite_friend';
+  // 翻译页面
+  static String translation = '/translation';
+  
   static final routes = [
-    GetPage(
-      name: routeList[0]['route']!,
-      page: () => const IntroductionAnimationScreen(),
-    ),
-    GetPage(
-      name: routeList[1]['route']!,
-      page: () => MyHomePage(),
-    ),
-    GetPage(
-      name: routeList[2]['route']!,
-      page: () => const HomeNavigation(),
-    ),
-    GetPage(
-      name: routeList[3]['route']!,
-      page: () => const LoginPage(),
-    ),
-    GetPage(
-      name: routeList[4]['route']!,
-      page: () => const SignUpPage(),
-    ),
-    GetPage(
-      name: routeList[5]['route']!,
-      page: () => ListeningPage(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
-    GetPage(
-      name: routeList[6]['route']!,
-      page: () => ReadingPage(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
-    GetPage(
-      name: routeList[7]['route']!,
-      page: () => WritingPage(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
-    GetPage(
-      name: routeList[8]['route']!,
-      page: () => FeedbackScreen(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
-    GetPage(
-      name: routeList[9]['route']!,
-      page: () => HelpScreen(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
-    GetPage(
-      name: routeList[10]['route']!,
-      page: () => InviteFriendScreen(),
-      middlewares: [RouteAuthMiddleware()],
-    ),
+      GetPage(
+        name: Routes.introduction,
+        page: () => const IntroductionAnimationScreen(),
+      ),
+      GetPage(
+        name: Routes.home,
+        page: () => MyHomePage(),
+      ),
+      GetPage(
+        name: Routes.homeNavigation,
+        page: () => const HomeNavigation(),
+      ),
+      GetPage(
+        name: Routes.login,
+        page: () => const LoginPage(),
+      ),
+      GetPage(
+        name: Routes.signUp,
+        page: () => const SignUpPage(),
+      ),
+      GetPage(
+        name: Routes.listening,
+        page: () => ListeningPage(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.reading,
+        page: () => ReadingPage(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.writing,
+        page: () => WritingPage(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.feedback,
+        page: () => FeedbackScreen(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.help,
+        page: () => HelpScreen(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.inviteFriend,
+        page: () => InviteFriendScreen(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.translation,
+        page: () => TranslationPage(),
+        middlewares: [RouteAuthMiddleware()],
+      ),
   ];
 }

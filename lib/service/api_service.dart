@@ -8,7 +8,8 @@ class ApiService {
   
   ApiService() {
     dio
-      ..options.baseUrl = 'http://localhost:8899/englishhub/'
+      // ..options.baseUrl = 'http://localhost:8899/englishhub/'
+      ..options.baseUrl = 'http://192.168.1.237:8899/englishhub/'
       ..interceptors.add(InterceptorsWrapper(
         onRequest: (options, handler) async {
           final storageService = Get.find<StorageService>();

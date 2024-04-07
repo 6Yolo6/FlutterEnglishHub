@@ -8,8 +8,6 @@ import 'package:flutter/services.dart';
 // 引入dart:io库，用于检测平台
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_english_hub/page/introduction_animation/introduction_animation_screen.dart';
-import 'package:flutter_english_hub/page/home_screen.dart';
 // 引入get库
 import 'package:get/get.dart';
 // 引入get_storage库
@@ -118,7 +116,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // 根据 isFirstTime 判断初始路由
-      initialRoute: isFirstTime ? routeList[0]['route'] : routeList[2]['route']!,
+      initialRoute: isFirstTime ? Routes.introduction: Routes.homeNavigation,
       // 路由表
       getPages: Routes.routes,
     );

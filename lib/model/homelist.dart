@@ -12,16 +12,19 @@ class HomeList {
   static List<HomeList> homeList = [
     HomeList(
       imagePath: 'assets/listening.png',
-      routeName: Routes.routes[5].name, 
+      routeName: Routes.listening,
     ),
     HomeList(
       imagePath: 'assets/reading.png',
-      routeName: Routes.routes[6].name,
+      routeName: Routes.reading,
     ),
     HomeList(
       imagePath: 'assets/hotel/writing.png',
-      routeName: Routes.routes[7].name,
+      routeName: Routes.writing,
     ),
-    
+    HomeList(
+      imagePath: 'assets/hotel/writing.png',
+      routeName: Routes.writing,
+    ),
   ];
 }

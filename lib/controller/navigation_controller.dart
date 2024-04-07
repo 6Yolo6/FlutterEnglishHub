@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_english_hub/router/router.dart';
 
+
 class NavigationController extends GetxController with SingleGetTickerProviderMixin {
   // 定义selectedIndex变量，用于记录当前选中的底部导航栏索引
   var selectedIndex = 0.obs;
@@ -28,10 +29,16 @@ class NavigationController extends GetxController with SingleGetTickerProviderMi
   // 点击底部导航栏时调用的方法
   void changePage(int index) {
     selectedIndex.value = index;
-    update();
-    if (index < Routes.routes.length) {
-      // 使用Getx的路由跳转到对应页面
-      Get.toNamed(Routes.routes[index].name);
+    update(); 
+    // 使用Getx的路由跳转
+    if (index == 0) {
+      Get.offNamed(Routes.homeNavigation);
+    } else if (index == 1) {
+      Get.offNamed(Routes.translation);
+    } else if (index == 2) {
+      // Get.offNamed(Routes().note);
+    } else if (index == 3) {
+      // Get.offNamed(Routes().word);
     }
   }
 

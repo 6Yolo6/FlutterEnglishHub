@@ -7,6 +7,7 @@ import 'package:flutter_english_hub/page/home_screen.dart';
 import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_english_hub/controller/navigation_controller.dart';
 
 class HomeNavigation extends StatefulWidget {
   const HomeNavigation({super.key});
@@ -22,10 +23,13 @@ class _HomeNavigationState extends State<HomeNavigation> {
   DrawerIndex? drawerIndex;
   // 当前选中的抽屉菜单项
 
+  final NavigationController _navigationController =
+      Get.find<NavigationController>();
+
   @override
   void initState() {
     // 初始化为首页home
-    drawerIndex = DrawerIndex.HOME;
+    // drawerIndex = DrawerIndex.HOME;
     screenView = MyHomePage();
     super.initState();
   }
@@ -35,6 +39,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
     return Container(
       color: AppTheme.white,
       child: SafeArea(
+        // s是否受屏幕UI影响
         top: false,
         bottom: false,
         child: Scaffold(
@@ -45,9 +50,8 @@ class _HomeNavigationState extends State<HomeNavigation> {
             onDrawerCall: (DrawerIndex drawerIndexdata) {
               changeIndex(drawerIndexdata);
               // 从抽屉菜单中回调，根据传递的DrawerIndex枚举索引替换屏幕视图
-              // 例如：MyHomePage、HelpScreen、FeedbackScreen等...
             },
-            // 替换屏幕视图，导航开始屏幕显示：MyHomePage、HelpScreen、FeedbackScreen等...
+            // 替换屏幕视图
             screenView: screenView,
           ),
         ),

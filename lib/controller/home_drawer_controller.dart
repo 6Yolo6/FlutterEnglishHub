@@ -99,6 +99,7 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: isLightMode ? AppTheme.white : AppTheme.nearlyBlack,
+      // 实现水平滚动
       body: SingleChildScrollView(
         controller: scrollController,
         scrollDirection: Axis.horizontal,
@@ -113,6 +114,7 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
                 width: widget.drawerWidth,
                 //we divided first drawer Width with HomeDrawer and second full-screen Width with all home screen, we called screen View
                 height: MediaQuery.of(context).size.height,
+                // 抽屉的动画效果
                 child: AnimatedBuilder(
                   animation: iconAnimationController!,
                   builder: (BuildContext context, Widget? child) {
@@ -150,9 +152,11 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
                           blurRadius: 24),
                     ],
                   ),
+                  // 层叠布局，将两个Widget叠加在一起
                   child: Stack(
                     children: <Widget>[
                       //this IgnorePointer we use as touch(user Interface) widget.screen View, for example scrolloffset == 1 means drawer is close we just allow touching all widget.screen View
+                      // 控制是否忽略触摸事件
                       IgnorePointer(
                         ignoring: scrolloffset == 1 || false,
                         child: widget.screenView,
@@ -164,11 +168,11 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
                             onDrawerClick();
                           },
                         ),
-                      // this just menu and arrow icon animation
+                      // this just menu and arrow icon animation  
                       Padding(
+                        // 抽屉菜单按钮位置
                         padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).padding.top + 8,
-                            left: 8),
+                            top: MediaQuery.of(context).padding.top + 2, left: 6),
                         child: SizedBox(
                           width: AppBar().preferredSize.height - 8,
                           height: AppBar().preferredSize.height - 8,
@@ -179,9 +183,7 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
                                   AppBar().preferredSize.height),
                               child: Center(
                                 // if you use your own menu view UI you add form initialization
-                                child: widget.menuView != null
-                                    ? widget.menuView
-                                    : AnimatedIcon(
+                                child: widget.menuView ?? AnimatedIcon(
                                         color: isLightMode
                                             ? AppTheme.dark_grey
                                             : AppTheme.white,

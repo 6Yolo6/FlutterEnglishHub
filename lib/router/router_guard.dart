@@ -15,7 +15,7 @@ class RouteAuthMiddleware extends GetMiddleware {
     print('authService.isAuthenticated.value: ${authService.isAuthenticated.value}');
     if (!authService.isAuthenticated.value) {
       // 重定向到登录页
-      return RouteSettings(name: routeList[3]['route']);
+      return RouteSettings(name: Routes.login);
     }
     // 否则，允许继续访问目标页
     return null;

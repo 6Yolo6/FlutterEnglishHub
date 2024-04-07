@@ -52,6 +52,8 @@ dependencies:
   dio: ^4.0.0
   # shared_preferences-本地存储
   shared_preferences: ^2.0.6
+  # webview_flutter-网页
+  webview_flutter: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +87,8 @@ flutter:
     - assets/fitness_app/
     - assets/hotel/
     - assets/introduction_animation/
+    - assets/CollinsEC.css
+    - assets/Sound.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -20,8 +20,9 @@ class _LoginPageState extends State<LoginPage> {
   // 登录控制器，
   final AuthController authController = Get.find<AuthController>();
   // 添加全局FormKey，用于校验输入
-  final _userNameKey = GlobalKey<FormState>();
-  final _passwordKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  // 是否隐藏密码
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +34,27 @@ class _LoginPageState extends State<LoginPage> {
         // 背景渐变色
         decoration: const BoxDecoration(gradient: SIGNUP_BACKGROUND),
         // ListView是一个可以垂直滚动的列表
-        child: ListView(
-          // 滚动效果
-          physics: const BouncingScrollPhysics(),
-          children: <Widget>[
-            Center(
-              child: Image.asset(
-                'assets/images/logo_signup.png',
-                width: 100.0,
-                height: 100.0,
-                fit: BoxFit.cover,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            // 滚动效果
+            physics: const BouncingScrollPhysics(),
+            children: <Widget>[
+              Center(
+                child: Image.asset(
+                  'assets/images/logo_signup.png',
+                  width: 100.0,
+                  height: 100.0,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            headlinesWidget(),
-            userNameTextFieldWidget(),
-            passwordTextFieldWidget(),
-            loginButtonWidget(),
-            signupWidget()
-          ],
+              headlinesWidget(),
+              userNameTextFieldWidget(),
+              passwordTextFieldWidget(),
+              loginButtonWidget(),
+              signupWidget()
+            ],
+          ),
         ),
       ),
     );
@@ -64,34 +68,45 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  void _passwordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   // 密码输入框
   Widget passwordTextFieldWidget() {
     return Container(
       margin: const EdgeInsets.only(left: 32.0, right: 16.0),
-      child: Form(
-        key: _passwordKey,
-        child: TextFormField(
-          // 密码输入框控制器
-          controller: passwordController,
-          style: hintAndValueStyle,
-          // 隐藏输入内容
-          obscureText: true,
-          decoration: InputDecoration(
-              fillColor: const Color(0x3305756D),
-              filled: true,
-              contentPadding: const EdgeInsets.fromLTRB(40.0, 30.0, 10.0, 10.0),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none),
-              hintText: 'Password',
-              hintStyle: hintAndValueStyle),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '密码不能为空';
-            }
-            return null;
-          },
-        ),
+      child: TextFormField(
+        // 密码输入框控制器
+        controller: passwordController,
+        style: hintAndValueStyle,
+        // 是否隐藏输入内容
+        obscureText: _obscureText,
+        decoration: InputDecoration(
+          suffixIcon: GestureDetector(
+            onTap: _passwordVisibility,
+            child: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Color(0xff35AA90),
+              size: 30.0,
+            ),
+          ),
+            fillColor: const Color(0x3305756D),
+            filled: true,
+            contentPadding: const EdgeInsets.fromLTRB(40.0, 30.0, 10.0, 10.0),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none),
+            hintText: 'Password',
+            hintStyle: hintAndValueStyle),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '密码不能为空';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -121,28 +136,25 @@ class _LoginPageState extends State<LoginPage> {
                 Color(0xffFFAFBD),
               ])),
       // 添加Form表单，用于校验输入
-      child: Form(
-        key: _userNameKey,
-        child: TextFormField(
-          // 用户名输入框控制器
-          controller: userController,
-          style: hintAndValueStyle,
-          decoration: InputDecoration(
-              suffixIcon: const Icon(IconData(0xe902, fontFamily: 'Icons'),
-                  color: Color(0xff35AA90), size: 10.0),
-              contentPadding: EdgeInsets.fromLTRB(40.0, 30.0, 10.0, 10.0),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none),
-              hintText: 'Username',
-              hintStyle: hintAndValueStyle),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '用户名不能为空';
-            }
-            return null;
-          },
-        ),
+      child: TextFormField(
+        // 用户名输入框控制器
+        controller: userController,
+        style: hintAndValueStyle,
+        decoration: InputDecoration(
+            suffixIcon: const Icon(Icons.person,
+                color: Color(0xff35AA90), size: 30.0),
+            contentPadding: EdgeInsets.fromLTRB(40.0, 30.0, 10.0, 10.0),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none),
+            hintText: 'Username',
+            hintStyle: hintAndValueStyle),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '用户名不能为空';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -199,10 +211,10 @@ class _LoginPageState extends State<LoginPage> {
                   // 打印输入的用户名和密码
                   print('username: ${userController.text}');
                   print('password: ${passwordController.text}');
-                  // if (_formKey.currentState!.validate()) {
+                  if (_formKey.currentState!.validate()) {
                   authController.login(
                       userController.text, passwordController.text);
-                  // }
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
