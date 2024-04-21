@@ -20,6 +20,15 @@ class AuthService extends GetxService {
         colorText: Colors.white);
   }
 
+  Future<AuthService> init() async {
+    var storageService = Get.find<StorageService>();
+    var userData = storageService.getUser();
+    if (userData != null) {
+      user.value = userData;
+    }
+    return this;
+  }
+
   // 登录接口
   Future<bool> loginService(String username, String password) async {
     try {
@@ -30,10 +39,6 @@ class AuthService extends GetxService {
           'password': password,
         },
       );
-      print('response: ${response}');
-      print('response.data: ${response.data}');
-      print('response.statusCode: ${response.statusCode}');
-      print('response.data["statusCode"]: ${response.data['statusCode']}');
       // success
       if (response.statusCode == 200) {
         var data = response.data;
@@ -41,17 +46,17 @@ class AuthService extends GetxService {
         // 600错误码表示用户名或密码错误
         if (dataStatusCode == '600') {
           String message = data['message'];
-          showFeedback('登录', 'Login failed: $message', Colors.red);
+          apiService.showFeedback('登录', 'Login failed: $message', Colors.red);
           return false;
         } else if (dataStatusCode == '200') {
           String? token = data['data']['token'];
           if (token != null) {
             // 保存token
-            Get.find<StorageService>().saveToken(token);
+            await Get.find<StorageService>().saveToken(token);
             // 将返回json数据转换为User对象，并存储
             user.value = User.fromJson(data['data']['user']);
             Get.find<StorageService>().saveUser(user.value!.toJson());
-            showFeedback('登录', 'Login successful', Colors.green);
+            apiService.showFeedback('登录成功', 'Login successful', Colors.green);
             return true;
           }
         }
@@ -62,10 +67,10 @@ class AuthService extends GetxService {
         print('Error statusCode: ${e.response!.statusCode}');
         print('Error response data: ${e.response!.data}');
         // 其他错误
-        showFeedback('登录', 'Login failed: Unknown error', Colors.red);
+        apiService.showFeedback('登录', 'Login failed: Unknown error', Colors.red);
       } else {
         // Error without response data
-        showFeedback('登录', 'Login failed: Error occurred', Colors.red);
+        apiService.showFeedback('登录', 'Login failed: Error occurred', Colors.red);
       }
     }
     return false;
@@ -89,10 +94,10 @@ class AuthService extends GetxService {
         // 400错误码表示用户名已存在
         if (dataStatusCode == '400') {
           String message = data['message'];
-          showFeedback('注册', '用户名已存在: $message', Colors.red);
+          apiService.showFeedback('注册', '用户名已存在: $message', Colors.red);
           return false;
         } else if (dataStatusCode == '200') {
-          showFeedback('注册', 'Register successful', Colors.green);
+          apiService.showFeedback('注册', 'Register successful', Colors.green);
           return true;
         }
       }
@@ -102,10 +107,10 @@ class AuthService extends GetxService {
         print('Error statusCode: ${e.response!.statusCode}');
         print('Error response data: ${e.response!.data}');
         // 其他错误
-        showFeedback('注册', 'Register failed: Unknown error', Colors.red);
+        apiService.showFeedback('注册', 'Register failed: Unknown error', Colors.red);
       } else {
         // Error without response data
-        showFeedback('注册', 'Register failed: Error occurred', Colors.red);
+        apiService.showFeedback('注册', 'Register failed: Error occurred', Colors.red);
       }
     }
     return false;
@@ -120,18 +125,25 @@ class AuthService extends GetxService {
         String? dataStatusCode = data['statusCode'];
         if (dataStatusCode == '200') {
           isAuthenticated.value = true;
-        } else if (dataStatusCode == '400')  {
-          // token无效
-          showFeedback('', 'token无效，请重新登录', Colors.red);
-          isAuthenticated.value = false;
-        }
+        } 
+        // else if (dataStatusCode == '401')  {
+        //   // token无效
+        //   showFeedback('', 'token无效，请重新登录', Colors.red);
+        //   isAuthenticated.value = false;
+        // }
       }
     } on dio.DioError catch (e) {
-      if (e.response != null) {
-        print('Error statusCode: ${e.response!.statusCode}');
-        print('Error response data: ${e.response!.data}');
+      if (e.response!.statusCode == 401) {
+        // token无效
+        apiService.showFeedback('', e.response!.data.message, Colors.red);
+        isAuthenticated.value = false;
       }
-      isAuthenticated.value = false;
+      else {
+        // 其他错误
+        apiService.showFeedback('', 'Error occurred', Colors.red);
+        print('error: ${e}');
+        isAuthenticated.value = false;
+      }
     }
     print('是否已登录: ${isAuthenticated.value}');
   }

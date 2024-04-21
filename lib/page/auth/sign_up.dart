@@ -258,7 +258,7 @@ Widget loginWidget() {
         TextButton(
           onPressed: () {
             print('login button pressed');
-            Get.to(() => const SignUpPage(), transition: Transition.fade);
+            Get.to(() => const LoginPage(), transition: Transition.fade);
           },
           child: const Text(
             'Login',

@@ -20,6 +20,8 @@ import 'package:flutter_english_hub/service/service.dart';
 import 'package:flutter_english_hub/page/navigation/custom_bottom_navigation_bar.dart';
 // 引入navigation_controller导航控制器
 import 'package:flutter_english_hub/controller/navigation_controller.dart';
+// 引入media_kit库
+// import 'package:media_kit/media_kit.dart';// Provides [Player], [Media], [Playlist] etc.
 
 // 定义main函数作为应用的入口点
 void main() async {
@@ -28,8 +30,10 @@ void main() async {
   // 初始化GetStorage
   await GetStorage.init();
   // 初始化Service，使用Get.lazyPut()方法来延迟加载服务
-  Service.init();
+  await Service.init();
   final isFirstTime = GetStorage().read('isFirstTime') ?? true;
+  // 初始化MediaKit
+  // MediaKit.ensureInitialized();
   // 设置设备的首选方向为纵向
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
@@ -95,17 +99,6 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         // 设置应用栏标题
         // appBar: AppBar(title: const Text('English Hub')),
-        // // 使用GetBuilder来监听NavigationController的变化，并根据selectedIndex来显示不同的页面
-        // body: GetBuilder<NavigationController>(
-        //   builder: (controller) {
-        //     switch (controller.selectedIndex.value) {
-        //       case 0:
-        //         return const IntroductionAnimationScreen();
-        //       default:
-        //         return MyHomePage();
-        //     }
-        //   },
-        // ),
         bottomNavigationBar: GetBuilder<NavigationController>(
           builder: (controller) {
             if (controller.shouldShowBottomNavigationBar()) {

@@ -50,9 +50,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: Icon(Icons.help),
       ),
       DrawerList(
-        index: DrawerIndex.Invite,
-        labelName: 'Invite Friend',
-        icon: Icon(Icons.group),
+        index: DrawerIndex.ForgettingCurve,
+        labelName: '遗忘曲线',
+        icon: Icon(Icons.data_thresholding_rounded),
       ),
       DrawerList(
         index: DrawerIndex.Share,
@@ -318,7 +318,7 @@ enum DrawerIndex {
   Help,
   Share,
   About,
-  Invite,
+  ForgettingCurve,
   Testing,
 }
 

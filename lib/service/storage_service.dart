@@ -38,7 +38,11 @@ class StorageService extends GetxService {
   }
 
   // 获取用户信息
-  User getUser() {
-    return _storage.read('user');
+  User? getUser() {
+    var userData = _storage.read('user');
+    if (userData != null) {
+      return User.fromJson(userData);
+    }
+    return null;
   }
 }

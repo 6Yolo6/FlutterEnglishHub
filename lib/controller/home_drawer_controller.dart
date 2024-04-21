@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class HomeDrawerController extends StatefulWidget {
   const HomeDrawerController({
-    super.key,
+    Key? key,
     this.drawerWidth = 250,
     this.onDrawerCall,
     this.screenView,
@@ -14,7 +14,7 @@ class HomeDrawerController extends StatefulWidget {
     this.menuView,
     this.drawerIsOpen,
     this.screenIndex,
-  });
+  }) : super(key: key);
 
   final double drawerWidth;
   final Function(DrawerIndex)? onDrawerCall;

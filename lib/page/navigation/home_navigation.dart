@@ -4,10 +4,9 @@ import 'package:flutter_english_hub/page/drawer/home_drawer.dart';
 import 'package:flutter_english_hub/page/drawer/feedback_screen.dart';
 import 'package:flutter_english_hub/page/drawer/help_screen.dart';
 import 'package:flutter_english_hub/page/home_screen.dart';
-import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
+import 'package:flutter_english_hub/page/drawer/Forgetting_curve_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_english_hub/controller/navigation_controller.dart';
 
 class HomeNavigation extends StatefulWidget {
   const HomeNavigation({super.key});
@@ -23,8 +22,6 @@ class _HomeNavigationState extends State<HomeNavigation> {
   DrawerIndex? drawerIndex;
   // 当前选中的抽屉菜单项
 
-  final NavigationController _navigationController =
-      Get.find<NavigationController>();
 
   @override
   void initState() {
@@ -46,6 +43,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
           backgroundColor: AppTheme.nearlyWhite,
           body: HomeDrawerController(
             screenIndex: drawerIndex,
+            // 抽屉宽度设置为屏幕宽度的0.75
             drawerWidth: MediaQuery.of(context).size.width * 0.75,
             onDrawerCall: (DrawerIndex drawerIndexdata) {
               changeIndex(drawerIndexdata);
@@ -61,37 +59,6 @@ class _HomeNavigationState extends State<HomeNavigation> {
 
   // 根据传递的DrawerIndex枚举索引替换屏幕视图，即当前选中的抽屉菜单项
 
-  // 使用setState的页面跳转方法
-  // void changeIndex(DrawerIndex drawerIndexdata) {
-  //   if (drawerIndex != drawerIndexdata) {
-  //     drawerIndex = drawerIndexdata;
-  //     switch (drawerIndex) {
-  //       case DrawerIndex.HOME:
-  //         setState(() {
-  //           screenView = const MyHomePage();
-  //         });
-  //         break;
-  //       case DrawerIndex.Help:
-  //         setState(() {
-  //           screenView = HelpScreen();
-  //         });
-  //         break;
-  //       case DrawerIndex.FeedBack:
-  //         setState(() {
-  //           screenView = FeedbackScreen();
-  //         });
-  //         break;
-  //       case DrawerIndex.Invite:
-  //         setState(() {
-  //           screenView = InviteFriend();
-  //         });
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  // }
-
   // 使用Getx的页面跳转方法
   void changeIndex(DrawerIndex drawerIndexdata) {
     if (drawerIndex != drawerIndexdata) {
@@ -106,8 +73,8 @@ class _HomeNavigationState extends State<HomeNavigation> {
         case DrawerIndex.FeedBack:
           Get.to(() => FeedbackScreen());
           break;
-        case DrawerIndex.Invite:
-          Get.to(() => InviteFriendScreen());
+        case DrawerIndex.ForgettingCurve:
+          Get.to(() => ForgettingCurveScreen());
           break;
         default:
           break;

@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   // 用户名和密码输入框控制器
   final userController = TextEditingController();
   final passwordController = TextEditingController();
-  // 登录控制器，
+  // 登录控制器
   final AuthController authController = Get.find<AuthController>();
   // 添加全局FormKey，用于校验输入
   final _formKey = GlobalKey<FormState>();

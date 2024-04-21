@@ -12,7 +12,7 @@ import 'package:flutter_english_hub/page/writing/writing.dart';
 import 'package:flutter_english_hub/page/navigation/home_navigation.dart';
 import 'package:flutter_english_hub/page/drawer/feedback_screen.dart';
 import 'package:flutter_english_hub/page/drawer/help_screen.dart';
-import 'package:flutter_english_hub/page/drawer/invite_friend_screen.dart';
+import 'package:flutter_english_hub/page/drawer/forgetting_curve_screen.dart';
 import 'package:flutter_english_hub/page/translation/translation.dart';
 
 
@@ -63,8 +63,8 @@ class Routes {
   static String feedback = '/feedback';
   // 帮助页面
   static String help = '/help';
-  // 邀请好友页面
-  static String inviteFriend = '/invite_friend';
+  // 遗忘曲线页面
+  static String forgettingCurve = '/forgetting_curve';
   // 翻译页面
   static String translation = '/translation';
   
@@ -92,37 +92,37 @@ class Routes {
       GetPage(
         name: Routes.listening,
         page: () => ListeningPage(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
         name: Routes.reading,
         page: () => ReadingPage(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
         name: Routes.writing,
         page: () => WritingPage(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
         name: Routes.feedback,
         page: () => FeedbackScreen(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
         name: Routes.help,
         page: () => HelpScreen(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
-        name: Routes.inviteFriend,
-        page: () => InviteFriendScreen(),
-        middlewares: [RouteAuthMiddleware()],
+        name: Routes.forgettingCurve,
+        page: () => const ForgettingCurveScreen(),
+        // middlewares: [RouteAuthMiddleware()],
       ),
       GetPage(
         name: Routes.translation,
         page: () => TranslationPage(),
-        middlewares: [RouteAuthMiddleware()],
+        // middlewares: [RouteAuthMiddleware()],
       ),
   ];
 }

@@ -1,7 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackScreen extends StatefulWidget {
+  const FeedbackScreen({super.key});
+  
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState();
 }
@@ -21,6 +25,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       child: SafeArea(
         top: false,
         child: Scaffold(
+          appBar: AppBar(
+            title: const Text('反馈'),
+          ),
           backgroundColor:
               isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
           body: SingleChildScrollView(
@@ -133,13 +140,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               child: TextField(
                 maxLines: null,
                 onChanged: (String txt) {},
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTheme.fontName,
                   fontSize: 16,
                   color: AppTheme.dark_grey,
                 ),
                 cursorColor: Colors.blue,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Enter your feedback...'),
               ),
