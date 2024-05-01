@@ -43,7 +43,7 @@ class _DraggableFloatingButtonState extends State<DraggableFloatingButton> {
 
           // 根据屏幕中线确定左侧或右侧
           if (dx < screenWidth / 2) {
-            dx = 0; // 左侧
+            dx = 1; // 左侧
           } else {
             // 右侧
             dx = screenWidth - buttonSize - 7; // 10是右侧间距
