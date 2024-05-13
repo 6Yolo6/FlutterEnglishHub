@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_english_hub/controller/custom_theme_controller.dart';
+import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:get/get.dart';
 
-class CustomThemePage extends StatelessWidget {
 
+class CustomThemePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Theme Switcher'),
+        title: Text('更改主题'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Get.find<CustomThemeController>().toggleTheme();
-            print('Switch Theme');
+            //直接设置Theme
+            Get.changeTheme(
+                Get.isDarkMode ? lightTheme : darkTheme);
+            //设置ThemeMode
+            // Get.changeThemeMode(ThemeMode.dark);
           },
-          child: Text('Switch Theme'),
+          child: Text(
+            "更换主题",
+            style: Get.textTheme.displayLarge,
+          ),
         ),
       ),
     );
@@ -38,7 +44,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   scaffoldBackgroundColor: ThemeData.light().scaffoldBackgroundColor,
   backgroundColor: Colors.white,
   iconTheme: const IconThemeData(
-    color: Colors.red,
+    color: AppTheme.black,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       selectedItemColor: Colors.blue,
