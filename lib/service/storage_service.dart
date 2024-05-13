@@ -1,5 +1,5 @@
 // ignore: file_names
-import 'package:flutter_english_hub/model/user.dart';
+import 'package:flutter_english_hub/model/User.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -44,5 +44,10 @@ class StorageService extends GetxService {
       return User.fromJson(userData);
     }
     return null;
+  }
+
+  // 清除用户信息
+  Future<void> clearUser() async {
+    await _storage.remove('user');
   }
 }

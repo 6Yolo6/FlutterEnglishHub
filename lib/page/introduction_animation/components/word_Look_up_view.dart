@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class RelaxView extends StatelessWidget {
+class WordLookUpView extends StatelessWidget {
   final AnimationController animationController;
 
-  const RelaxView({Key? key, required this.animationController})
+  const WordLookUpView({Key? key, required this.animationController})
       : super(key: key);
 
   @override
@@ -76,7 +77,7 @@ class RelaxView extends StatelessWidget {
               SlideTransition(
                 position: _relaxAnimation,
                 child: Text(
-                  "Relax",
+                  "WORD LOOKUP".tr,
                   style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -86,7 +87,7 @@ class RelaxView extends StatelessWidget {
                   padding:
                       EdgeInsets.only(left: 64, right: 64, top: 16, bottom: 16),
                   child: Text(
-                    "Lorem ipsum dolor sit amet,consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore",
+                    "wordLookupDescription".tr,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -96,7 +97,7 @@ class RelaxView extends StatelessWidget {
                 child: Container(
                   constraints: BoxConstraints(maxWidth: 350, maxHeight: 250),
                   child: Image.asset(
-                    'assets/introduction_animation/relax_image.png',
+                    'assets/introduction_animation/todo5.png',
                     fit: BoxFit.contain,
                   ),
                 ),

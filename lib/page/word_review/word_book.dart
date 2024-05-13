@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:flutter_english_hub/model/custom_image_painter.dart';
+import 'package:flutter_english_hub/page/widget/custom_image_painter.dart';
+import 'package:get/get.dart';
 
 
-class VocabularyBookPage extends StatefulWidget {
-  const VocabularyBookPage({super.key});
+class WordBookPage extends StatefulWidget {
+  const WordBookPage({super.key});
 
   @override
-  _VocabularyBookPageState createState() => _VocabularyBookPageState();
+  _WordBookPageState createState() => _WordBookPageState();
 }
 
-class _VocabularyBookPageState extends State<VocabularyBookPage> with SingleTickerProviderStateMixin {
+class _WordBookPageState extends State<WordBookPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _categories = ['四级', '六级', '考研']; // 分类标签
 
@@ -42,14 +43,14 @@ class _VocabularyBookPageState extends State<VocabularyBookPage> with SingleTick
         body: TabBarView(
           controller: _tabController,
           children: _categories.map((String category) {
-            return buildVocabularyBookList(category);
+            return buildWordBookList(category);
           }).toList(),
         ),
       ),
     );
   }
 
-  Widget buildVocabularyBookList(String category) {
+  Widget buildWordBookList(String category) {
     // Sample word count for each category
     final wordCount = math.Random().nextInt(1000) + 100;
 
@@ -59,7 +60,7 @@ class _VocabularyBookPageState extends State<VocabularyBookPage> with SingleTick
         final bookName = '$category 单词书 $index'; // Example book name
         const imagePath = 'https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/jpg/d6f27fffa6b247508eb0c61c315e7c78hd-wallpaper-g745e7965a_640.jpg';
 
-        return VocabularyBookTile(
+        return WordBookTile(
           bookName: bookName,
           wordCount: wordCount.toString(),
           imagePath: imagePath,
@@ -69,12 +70,12 @@ class _VocabularyBookPageState extends State<VocabularyBookPage> with SingleTick
   }
 }
 
-class VocabularyBookTile extends StatelessWidget {
+class WordBookTile extends StatelessWidget {
   final String bookName;
   final String wordCount;
   final String imagePath;
 
-  VocabularyBookTile({
+  WordBookTile({
     required this.bookName,
     required this.wordCount,
     required this.imagePath,
@@ -127,11 +128,19 @@ Future<void> showDailyWordCountDialog(BuildContext context, int totalWords) asyn
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('取消'),
-            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              '取消',
+              style: TextStyle(
+                color: Get.theme.colorScheme.onPrimary,
+              )
+            ),
+            onPressed: () => Get.back(),
           ),
           TextButton(
-            child: const Text('确定'),
+            child: Text('确定',
+              style: TextStyle(
+                color: Get.theme.colorScheme.onPrimary,
+              )),
             onPressed: () {
               // TODO: 确定选项，保存学习计划
               Navigator.of(context).pop();

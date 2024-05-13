@@ -2,6 +2,8 @@
 
 import "package:flutter/material.dart";
 import 'package:flutter_english_hub/controller/auth_controller.dart';
+import 'package:flutter_english_hub/main.dart';
+import 'package:flutter_english_hub/page/auth/forgot_password.dart';
 import 'package:get/get.dart';
 import 'package:flutter_english_hub/page/auth/sign_up.dart';
 import 'package:flutter_english_hub/theme/login_theme.dart';
@@ -26,11 +28,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    Get.find<MyApp>().setShouldShowFloatingButton(false, context);
     // 返回一个Scaffold，是Material库中提供的页面脚手架
     return Scaffold(
       body: Container(
         // padding上边距
-        padding: const EdgeInsets.only(top: 64.0),
+        padding: const EdgeInsets.only(top: 44.0),
         // 背景渐变色
         decoration: const BoxDecoration(gradient: SIGNUP_BACKGROUND),
         // ListView是一个可以垂直滚动的列表
@@ -42,9 +45,9 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[
               Center(
                 child: Image.asset(
-                  'assets/images/logo_signup.png',
-                  width: 100.0,
-                  height: 100.0,
+                  'assets/images/logo.png',
+                  width: 200.0,
+                  height: 200.0,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -162,27 +165,30 @@ class _LoginPageState extends State<LoginPage> {
   // 登录标题
   Widget headlinesWidget() {
     return Container(
-      margin: const EdgeInsets.only(left: 48.0, top: 32.0),
+      margin: const EdgeInsets.only(left: 48.0, top: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
-            'WELCOME BACK!',
+          Text(
+            'WELCOME TO ENGLISH HUB'.tr,
             textAlign: TextAlign.left,
             style: TextStyle(
                 letterSpacing: 3,
                 fontSize: 20.0,
+                color: Get.theme.primaryColor,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.bold),
+            
           ),
           Container(
             margin: const EdgeInsets.only(top: 48.0),
-            child: const Text(
-              'Log in \nto continue.',
+            child: Text(
+              'Log in \nto continue'.tr,
               textAlign: TextAlign.left,
               style: TextStyle(
                 letterSpacing: 3,
                 fontSize: 32.0,
+                color: Get.theme.primaryColor,
                 fontFamily: 'Montserrat',
               ),
             ),
@@ -240,8 +246,8 @@ class _LoginPageState extends State<LoginPage> {
                             Color(0xff000000),
                             Color(0xff434343),
                           ])),
-                  child: const Text(
-                    'LOGIN',
+                  child: Text(
+                    'LOGIN'.tr,
                     style: TextStyle(
                         color: Color(0xffF1EA94),
                         fontWeight: FontWeight.bold,
@@ -249,6 +255,44 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  print('忘记密码');
+                  // 跳转到忘记密码页面
+                  Get.to(() => ForgotPasswordPage(), transition: Transition.fade, duration: Duration(seconds: 1));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 36.0, vertical: 16.0),
+                  margin: const EdgeInsets.only(left: 16.0),
+                  decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 15,
+                            spreadRadius: 0,
+                            offset: Offset(0.0, 32.0)),
+                      ],
+                      borderRadius: new BorderRadius.circular(36.0),
+                      gradient: const LinearGradient(
+                          begin: FractionalOffset.centerLeft,
+                          stops: [
+                            0.2,
+                            1
+                          ],
+                          colors: [
+                            Color(0xff000000),
+                            Color(0xff434343),
+                          ])),
+                  child: Text(
+                    'FORGOT PASSWORD'.tr,
+                    style: TextStyle(
+                        color: Color(0xffF1EA94),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat'),
+                  ),
+                ),
+              )
             ],
           ),
         );
@@ -263,17 +307,20 @@ Widget signupWidget() {
     margin: const EdgeInsets.only(left: 48.0, top: 32.0),
     child: Row(
       children: <Widget>[
-        const Text(
-          'Don\'t have an account?',
-          style: TextStyle(fontFamily: 'Montserrat'),
+        Text(
+          'Don\'t have an account'.tr,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Get.theme.primaryColor,
+            ),
         ),
         TextButton(
           onPressed: () {
             print('Sign Up button pressed');
             Get.to(() => const SignUpPage(), transition: Transition.fade);
           },
-          child: const Text(
-            'Sign Up',
+          child: Text(
+            'Sign Up'.tr,
             style: TextStyle(
                 color: Color(0xff353535),
                 decoration: TextDecoration.underline,

@@ -1,4 +1,4 @@
-import 'package:flutter_english_hub/model/user.dart';
+import 'package:flutter_english_hub/model/User.dart';
 import 'package:flutter_english_hub/service/api_service.dart';
 import 'package:flutter_english_hub/service/storage_service.dart';
 import 'package:get/get.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class AuthService extends GetxService {
   final ApiService apiService = Get.find<ApiService>();
+  final StorageService storageService = Get.find<StorageService>();
   // 存储当前登录用户信息
   var user = Rxn<User>();
   // 监听登录状态
@@ -21,7 +22,6 @@ class AuthService extends GetxService {
   }
 
   Future<AuthService> init() async {
-    var storageService = Get.find<StorageService>();
     var userData = storageService.getUser();
     if (userData != null) {
       user.value = userData;
@@ -51,11 +51,12 @@ class AuthService extends GetxService {
         } else if (dataStatusCode == '200') {
           String? token = data['data']['token'];
           if (token != null) {
+            isAuthenticated = true.obs;
             // 保存token
-            await Get.find<StorageService>().saveToken(token);
+            storageService.saveToken(token);
             // 将返回json数据转换为User对象，并存储
             user.value = User.fromJson(data['data']['user']);
-            Get.find<StorageService>().saveUser(user.value!.toJson());
+            storageService.saveUser(user.value!.toJson());
             apiService.showFeedback('登录成功', 'Login successful', Colors.green);
             return true;
           }
@@ -146,5 +147,13 @@ class AuthService extends GetxService {
       }
     }
     print('是否已登录: ${isAuthenticated.value}');
+  }
+
+  // 退出登录
+  void logout() {
+    storageService.clearToken();
+    storageService.clearUser();
+    isAuthenticated.value = false;
+    Get.offAllNamed('/login');
   }
 }

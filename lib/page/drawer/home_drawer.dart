@@ -1,3 +1,4 @@
+import 'package:flutter_english_hub/page/auth/login.dart';
 import 'package:flutter_english_hub/service/auth_service.dart';
 import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -50,18 +51,23 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: Icon(Icons.help),
       ),
       DrawerList(
-        index: DrawerIndex.ForgettingCurve,
-        labelName: '遗忘曲线',
-        icon: Icon(Icons.data_thresholding_rounded),
+        index: DrawerIndex.ChangeTheme,
+        labelName: '更改主题',
+        icon: Icon(Icons.brightness_6),
       ),
       DrawerList(
-        index: DrawerIndex.Share,
-        labelName: 'Rate the app',
-        icon: Icon(Icons.share),
+        index: DrawerIndex.ChangeLanguage,
+        labelName: '更改语言',
+        icon: Icon(Icons.language),
+      ),
+      DrawerList(
+        index: DrawerIndex.Favorite,
+        labelName: '我的收藏',
+        icon: Icon(Icons.favorite),
       ),
       DrawerList(
         index: DrawerIndex.About,
-        labelName: 'About Us',
+        labelName: '关于我',
         icon: Icon(Icons.info),
       ),
     ];
@@ -69,12 +75,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
+    // var brightness = MediaQuery.of(context).platformBrightness;
+    // bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-      backgroundColor: AppTheme.notWhite.withOpacity(0.5),
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       body: Obx(() {
         var user = Get.find<AuthService>().user.value;
+        bool isLoggedIn = Get.find<AuthService>().isAuthenticated.value;
         return Column(
           // 侧边栏内容垂直排列
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,12 +127,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                               ),
                               // 用户头像
                               child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(60.0)),
-                                child: user != null
-                                    ? Image.network(user.avatar)
-                                    : Image.asset(
-                                        'assets/images/userImage.png'),
+                                borderRadius: const BorderRadius.all(Radius.circular(60.0)),
+                                child: isLoggedIn 
+                                  ? (user!.avatar.isNotEmpty 
+                                    ? Image.network(user.avatar) 
+                                    : Image.asset('assets/images/userImage.png')) 
+                                  : Image.asset('assets/images/userImage.png'),
                               ),
                             ),
                           ),
@@ -136,10 +143,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8, left: 4),
                       child: Text(
-                        user != null ? user.username : '游客',
+                        isLoggedIn ? user!.username : 'Guest'.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: isLightMode ? AppTheme.grey : AppTheme.white,
+                          color: Get.theme.textTheme.headline6!.color,
                           fontSize: 18,
                         ),
                       ),
@@ -173,21 +180,25 @@ class _HomeDrawerState extends State<HomeDrawer> {
               children: <Widget>[
                 ListTile(
                   title: Text(
-                    'Sign Out',
+                    isLoggedIn ? 'Sign Out'.tr : 'Go to Login'.tr,
                     style: TextStyle(
-                      fontFamily: AppTheme.fontName,
+                      fontFamily: 'WorkSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      color: AppTheme.darkText,
+                      color: Get.theme.textTheme.headline6!.color,
                     ),
                     textAlign: TextAlign.left,
                   ),
                   trailing: Icon(
-                    Icons.power_settings_new,
-                    color: Colors.red,
+                    isLoggedIn ? Icons.power_settings_new : Icons.login,
+                    color: Get.theme.iconTheme.color, // 使用当前主题的图标颜色
                   ),
                   onTap: () {
-                    onTapped();
+                    if (isLoggedIn) {
+                      SignOut();
+                    } else {
+                      GoToLogin();
+                    }
                   },
                 ),
                 SizedBox(
@@ -201,8 +212,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  void onTapped() {
-    print('sign out'); // Print to console.
+  void SignOut() {
+    print('sign out');
+    Get.find<AuthService>().logout();
+  }
+
+  void GoToLogin() {
+    print('go to login');
+    Get.to(() => LoginPage(), transition: Transition.fade, duration: Duration(seconds: 1));
   }
 
   Widget inkwell(DrawerList listData) {
@@ -287,7 +304,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                 MediaQuery.of(context).size.width * 0.75 - 64,
                             height: 46,
                             decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.2),
+                              color: Get.theme.iconTheme.color?.withOpacity(0.2),
                               borderRadius: new BorderRadius.only(
                                 topLeft: Radius.circular(0),
                                 topRight: Radius.circular(28),
@@ -319,7 +336,9 @@ enum DrawerIndex {
   Share,
   About,
   ForgettingCurve,
-  Testing,
+  Favorite,
+  ChangeTheme,
+  ChangeLanguage,
 }
 
 class DrawerList {

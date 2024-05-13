@@ -9,6 +9,8 @@ class AppTheme {
   static const Color nearlyBlack = Color(0xFF213333);
   static const Color grey = Color(0xFF3A5160);
   static const Color dark_grey = Color(0xFF313A44);
+  static const Color lightBlue = Color(0xFF5B9AE2);
+  static const Color black = Color(0xFF000000);
 
   static const Color darkText = Color(0xFF253840);
   static const Color darkerText = Color(0xFF17262A);
@@ -18,6 +20,7 @@ class AppTheme {
   static const Color chipBackground = Color(0xFFEEF1F3);
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'WorkSans';
+  static const String fontName2 = 'Roboto';
 
   static const TextTheme textTheme = TextTheme(
     headline4: display1,

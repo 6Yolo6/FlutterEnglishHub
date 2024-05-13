@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class MoodDiaryVew extends StatelessWidget {
+class LearningResourcesView extends StatelessWidget {
   final AnimationController animationController;
 
-  const MoodDiaryVew({Key? key, required this.animationController})
+  const LearningResourcesView({Key? key, required this.animationController})
       : super(key: key);
 
   @override
@@ -13,8 +14,8 @@ class MoodDiaryVew extends StatelessWidget {
             .animate(CurvedAnimation(
       parent: animationController,
       curve: Interval(
+        0.2,
         0.4,
-        0.6,
         curve: Curves.fastOutSlowIn,
       ),
     ));
@@ -23,14 +24,23 @@ class MoodDiaryVew extends StatelessWidget {
             .animate(CurvedAnimation(
       parent: animationController,
       curve: Interval(
+        0.4,
         0.6,
-        0.8,
         curve: Curves.fastOutSlowIn,
       ),
     ));
-
-    final _moodFirstHalfAnimation =
+    final _relaxFirstHalfAnimation =
         Tween<Offset>(begin: Offset(2, 0), end: Offset(0, 0))
+            .animate(CurvedAnimation(
+      parent: animationController,
+      curve: Interval(
+        0.2,
+        0.4,
+        curve: Curves.fastOutSlowIn,
+      ),
+    ));
+    final _relaxSecondHalfAnimation =
+        Tween<Offset>(begin: Offset(0, 0), end: Offset(-2, 0))
             .animate(CurvedAnimation(
       parent: animationController,
       curve: Interval(
@@ -39,23 +49,14 @@ class MoodDiaryVew extends StatelessWidget {
         curve: Curves.fastOutSlowIn,
       ),
     ));
-    final _moodSecondHalfAnimation =
-        Tween<Offset>(begin: Offset(0, 0), end: Offset(-2, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.6,
-        0.8,
-        curve: Curves.fastOutSlowIn,
-      ),
-    ));
+
     final _imageFirstHalfAnimation =
         Tween<Offset>(begin: Offset(4, 0), end: Offset(0, 0))
             .animate(CurvedAnimation(
       parent: animationController,
       curve: Interval(
+        0.2,
         0.4,
-        0.6,
         curve: Curves.fastOutSlowIn,
       ),
     ));
@@ -64,8 +65,8 @@ class MoodDiaryVew extends StatelessWidget {
             .animate(CurvedAnimation(
       parent: animationController,
       curve: Interval(
+        0.4,
         0.6,
-        0.8,
         curve: Curves.fastOutSlowIn,
       ),
     ));
@@ -79,24 +80,6 @@ class MoodDiaryVew extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Mood Dairy",
-                style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
-              ),
-              SlideTransition(
-                position: _moodFirstHalfAnimation,
-                child: SlideTransition(
-                  position: _moodSecondHalfAnimation,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 64, right: 64, top: 16, bottom: 16),
-                    child: Text(
-                      "Lorem ipsum dolor sit amet,consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
               SlideTransition(
                 position: _imageFirstHalfAnimation,
                 child: SlideTransition(
@@ -104,10 +87,29 @@ class MoodDiaryVew extends StatelessWidget {
                   child: Container(
                     constraints: BoxConstraints(maxWidth: 350, maxHeight: 250),
                     child: Image.asset(
-                      'assets/introduction_animation/mood_dairy_image.png',
+                      'assets/introduction_animation/todo3.png',
                       fit: BoxFit.contain,
                     ),
                   ),
+                ),
+              ),
+              SlideTransition(
+                position: _relaxFirstHalfAnimation,
+                child: SlideTransition(
+                  position: _relaxSecondHalfAnimation,
+                  child: Text(
+                    "LEARNING RESOURCES".tr,
+                    style:
+                        TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 64, right: 64, bottom: 16, top: 16),
+                child: Text(
+                  "learningResourcesDescription".tr,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],

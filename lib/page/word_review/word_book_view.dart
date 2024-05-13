@@ -2,79 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_english_hub/main.dart';
 import 'package:flutter_english_hub/model/WordBook.dart';
 import 'package:flutter_english_hub/page/word_review/review.dart';
-import 'package:flutter_english_hub/page/word_review/vocabulary_book.dart';
+import 'package:flutter_english_hub/page/word_review/word_book.dart';
 import 'dart:math' as math;
 import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 
-class VocabularyView extends StatelessWidget {
+class WordBookView extends StatefulWidget {
   final AnimationController? animationController;
   final Animation<double>? animation;
   final WordBook wordBook;
 
-  const VocabularyView({super.key, this.animationController, this.animation, required this.wordBook});
+  const WordBookView({Key? key, this.animationController, this.animation, required this.wordBook}) : super(key: key);
+  
+  @override
+  _WordBookViewState createState() => _WordBookViewState();
+}
+
+class _WordBookViewState extends State<WordBookView> {
+
+  @override
+  void initState() {
+    super.initState();
+   
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('学习'),
-    //   ),
-    //   body: ListView(
-    //     children: [
-    //       Card(
-    //         margin: EdgeInsets.all(8.0),
-    //         child: ListTile(
-    //           leading: Image.network(
-    //             'https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/jpg/d6f27fffa6b247508eb0c61c315e7c78hd-wallpaper-g745e7965a_640.jpg', // Replace with your custom image URL
-    //             width: 50,
-    //             height: 50,
-    //           ),
-    //           title: Text(selectedBook),
-    //           subtitle: Text('$learnedWords / $totalWords words'),
-    //           trailing: const Text('更换'),
-    //           onTap: () {
-    //             // 跳转到单词书选择页面
-    //             Get.to(const VocabularyBookPage(),transition: Transition.rightToLeft, duration: Duration(milliseconds: 500));
-    //           },
-    //         ),
-    //       ),
-    //       ListTile(
-    //         leading: Icon(Icons.settings),
-    //         title: Text('Vocabulary book settings'),
-    //         onTap: () {
-    //           //
-    //
-    //         },
-    //       ),
-    //       ListTile(
-    //         leading: Icon(Icons.sync),
-    //         title: Text('Synchronization settings'),
-    //         onTap: () {
-    //           //
-    //         },
-    //       ),
-    //       ListTile(
-    //         leading: Icon(Icons.bar_chart),
-    //         title: Text('Learning statistics'),
-    //         onTap: () {
-    //           //
-    //         },
-    //       ),
-    //     ],
-    //   ),
-    // );
-
     return AnimatedBuilder(
-      animation: animationController!,
+      animation: widget.animationController!,
       builder: (BuildContext context, Widget? child) {
         return FadeTransition(
-          opacity: animation!,
+          opacity: widget.animation!,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 30 * (1.0 - animation!.value), 0.0),
+                0.0, 30 * (1.0 - widget.animation!.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 20, right: 20, top: 5, bottom: 20),
@@ -122,7 +85,7 @@ class VocabularyView extends StatelessWidget {
                                         width: 130,
                                         height: 30,
                                         child: Marquee(
-                                          text: wordBook.name,
+                                          text: widget.wordBook.name,
                                           style: const TextStyle(
                                             fontFamily: AppTheme.fontName,
                                             fontWeight: FontWeight.w400,
@@ -148,7 +111,7 @@ class VocabularyView extends StatelessWidget {
                                         child: TextButton(
                                           onPressed: () {
                                             // 跳转到单词书选择页面
-                                            Get.to(const VocabularyBookPage(),
+                                            Get.to(const WordBookPage(),
                                                 transition: Transition.rightToLeft,
                                                 duration: const Duration(milliseconds: 500));
                                           },
@@ -215,9 +178,9 @@ class VocabularyView extends StatelessWidget {
                                                   // 跳转到单词学习页面
                                                   Get.to(
                                                       () => ReviewPage(
-                                                          wordBookId: wordBook.id,
+                                                          wordBookId: widget.wordBook.id,
                                                           animationController:
-                                                              animationController!),
+                                                              widget.animationController!),
                                                       transition:
                                                           Transition.fade,
                                                       duration: const Duration(
@@ -288,10 +251,10 @@ class VocabularyView extends StatelessWidget {
                             child: Column(
                               children: <Widget>[
                                 CustomPaint(
-                                  size: const Size(100, 100), // You can change this as needed
+                                  size: const Size(100, 100), 
                                   painter: ProgressPainter(
-                                    learned: (animation!.value * wordBook.learnedWords).round(),
-                                    total: wordBook.totalWords,
+                                    learned: (widget.animation!.value * widget.wordBook.learnedWords).round(),
+                                    total: widget.wordBook.totalWords,
                                     progressColor: AppTheme.lightBlue,
                                     backgroundColor: AppTheme.grey.withAlpha(88),
                                   ),
@@ -362,9 +325,9 @@ class VocabularyView extends StatelessWidget {
                                         // 计算今日学习进度，animation.value为动画进度：0-1动态变化
                                         Container(
                                           width: 70 *
-                                              animation!.value *
-                                              wordBook.learnedToday /
-                                              wordBook.toLearnToday,
+                                              widget.animation!.value *
+                                              widget.wordBook.learnedToday /
+                                              widget.wordBook.toLearnToday,
                                           // 进度条宽度
                                           height: 4,
                                           decoration: BoxDecoration(
@@ -388,7 +351,7 @@ class VocabularyView extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 6),
                                   child: Text(
-                                    '${wordBook.toLearnToday - wordBook.learnedToday} left today',
+                                    '${widget.wordBook.toLearnToday - widget.wordBook.learnedToday} left today',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: AppTheme.fontName2,
@@ -490,8 +453,8 @@ class VocabularyView extends StatelessWidget {
                                                 //     wordBook.masterWords /
                                                 //         wordBook.totalWords;
                                             Container(
-                                                  width: 70 * animation!.value * wordBook.masterWords /
-                                          wordBook.totalWords,
+                                                  width: 70 * widget.animation!.value * widget.wordBook.masterWords /
+                                          widget.wordBook.totalWords,
                                                   height: 4,
                                                   decoration: BoxDecoration(
                                                     gradient:
@@ -516,7 +479,7 @@ class VocabularyView extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 6),
                                       child: Text(
-                                        '${wordBook.masterWords} mastered',
+                                        '${widget.wordBook.masterWords} mastered',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontFamily: AppTheme.fontName2,
@@ -575,8 +538,8 @@ class VocabularyView extends StatelessWidget {
                                                 //     wordBook.learnedDays /
                                                 //         wordBook.totalDays;
                                                 Container(
-                                                  width: 70 * animation!.value * wordBook.learnedDays /
-                                          wordBook.totalDays,
+                                                  width: 70 * widget.animation!.value * widget.wordBook.learnedDays /
+                                          widget.wordBook.totalDays,
                                                   height: 4,
                                                   decoration: BoxDecoration(
                                                     gradient:
@@ -601,7 +564,7 @@ class VocabularyView extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 6),
                                       child: Text(
-                                        '${wordBook.totalDays - wordBook.learnedDays} days',
+                                        '${widget.wordBook.totalDays - widget.wordBook.learnedDays} days',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontFamily: AppTheme.fontName2,

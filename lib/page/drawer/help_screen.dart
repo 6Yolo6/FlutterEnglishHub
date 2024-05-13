@@ -26,7 +26,7 @@ class _HelpScreenState extends State<HelpScreen> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('帮助'),
+            title: Text('帮助'),
           ),
           backgroundColor:
               isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,

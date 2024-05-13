@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+class CustomLanguagePage extends StatefulWidget {
+  @override
+  _CustomLanguagePageState createState() => _CustomLanguagePageState();
+}
 
-class LanguageSelectionPage extends StatelessWidget {
+class _CustomLanguagePageState extends State<CustomLanguagePage> {
   final List<Locale> languages = [
     Locale('en', 'US'),
     Locale('zh', 'CN'),
@@ -19,7 +23,9 @@ class LanguageSelectionPage extends StatelessWidget {
           return ListTile(
             title: Text(languages[index].languageCode),
             onTap: () {
-              Get.updateLocale(languages[index]);
+              setState(() {
+                Get.updateLocale(languages[index]);
+              });
             },
           );
         },

@@ -1,13 +1,15 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:flutter_english_hub/main.dart';
+import 'package:flutter_english_hub/service/storage_service.dart';
 import 'package:get/get.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_english_hub/page/auth/login.dart';
 import 'package:flutter_english_hub/page/auth/sign_up.dart';
-import 'package:get_storage/get_storage.dart';
 
 
 class CenterNextButton extends StatelessWidget {
+  // 定义动画控制器和点击事件的回调函数
   final AnimationController animationController;
   final VoidCallback onNextClick;
   const CenterNextButton(
@@ -107,10 +109,13 @@ class CenterNextButton extends StatelessWidget {
                         ? InkWell(
                             key: ValueKey('Sign Up button'),
                             onTap: () {
-                              GetStorage().write('isFirstTime', false); // 更新标志位
+                              // 更新标志位isFirstTime
+                              Get.find<StorageService>().saveIsFirstTime(false);
                               // 跳转到注册页面
                               // Get.toNamed('/sign_up');
                               Get.to(() => SignUpPage(), transition: Transition.cupertino);
+                              // 设置是否显示全局悬浮按钮为false
+                              Get.find<MyApp>().setShouldShowFloatingButton(false, context);
                             },
                             child: Padding(
                               padding: EdgeInsets.only(left: 16.0, right: 16.0),
@@ -119,7 +124,7 @@ class CenterNextButton extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Sign Up',
+                                    'Sign Up'.tr,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
@@ -155,7 +160,7 @@ class CenterNextButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Already have an account? ',
+                    'already have an account'.tr,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
@@ -164,13 +169,16 @@ class CenterNextButton extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      GetStorage().write('isFirstTime', false); // 更新标志位
+                      // 更新标志位
+                      Get.find<StorageService>().saveIsFirstTime(false);
                       // 跳转到登录页面
                       // Get.toNamed('/login');
                       Get.to(() => LoginPage(), transition: Transition.cupertino);
+                      // 设置是否显示全局悬浮按钮为false
+                      Get.find<MyApp>().setShouldShowFloatingButton(false, context);
                     },
                     child: Text(
-                      'Login',
+                      'Login'.tr,
                       style: TextStyle(
                         color: Color(0xff132137),
                         fontSize: 16,
@@ -187,6 +195,7 @@ class CenterNextButton extends StatelessWidget {
     );
   }
 
+  // 定义一个小部件，用于显示页面视图
   Widget _pageView() {
     int _selectedIndex = 0;
 

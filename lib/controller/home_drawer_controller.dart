@@ -182,7 +182,7 @@ class _HomeDrawerControllerState extends State<HomeDrawerController>
                               borderRadius: BorderRadius.circular(
                                   AppBar().preferredSize.height),
                               child: Center(
-                                // if you use your own menu view UI you add form initialization
+                                // 菜单抽屉按钮
                                 child: widget.menuView ?? AnimatedIcon(
                                         color: isLightMode
                                             ? AppTheme.dark_grey

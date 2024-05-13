@@ -26,7 +26,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         top: false,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('反馈'),
+            title: Text('反馈'),
           ),
           backgroundColor:
               isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
@@ -140,7 +140,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               child: TextField(
                 maxLines: null,
                 onChanged: (String txt) {},
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTheme.fontName,
                   fontSize: 16,
                   color: AppTheme.dark_grey,

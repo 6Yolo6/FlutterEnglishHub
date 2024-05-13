@@ -1,3 +1,4 @@
+import 'package:flutter_english_hub/page/word_review/word_review.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_english_hub/router/router.dart';
@@ -8,63 +9,60 @@ class NavigationController extends GetxController with SingleGetTickerProviderMi
   var selectedIndex = 0.obs;
   // 存储当前页面的名称
   RxString currentPage = 'home'.obs;
-  // 添加一个新的变量来标记是否正在显示介绍动画
-  // RxBool isInIntroAnimation = false.obs;
-  // tab栏控制器
-  late TabController tabController;
+  // // tab栏控制器
+  // late TabController tabController;
+  // 定义两个TabController
+  late TabController topTabController;
+  late TabController bottomTabController;
+  late AnimationController animationController;
 
 
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 4, vsync: this); 
+    topTabController = TabController(length: 4, vsync: this);
+    bottomTabController = TabController(length: 5, vsync: this);
+    animationController = AnimationController(vsync: this);
   }
 
-  // 点击底部导航栏时调用的方法
-  void navigateTo(String pageName) {
-    currentPage.value = pageName;
-    update();
-  }
 
   // 点击底部导航栏时调用的方法
-  void changePage(int index) {
+  void changePage(int index, AnimationController animationController) {
     selectedIndex.value = index;
     update(); 
     // 使用Getx的路由跳转
     if (index == 0) {
-      Get.offNamed(Routes.homeNavigation);
+      // 主页
+      Get.to(Routes.routes[2].page(), transition: Transition.fade, duration: Duration(seconds: 1));
     } else if (index == 1) {
-      Get.offNamed(Routes.translation);
+      // 翻译
+      // Get.offNamed(Routes.routes[11].name);
+      Get.to(Routes.routes[11].page(), transition: Transition.fade, duration: Duration(seconds: 1));
     } else if (index == 2) {
-      // Get.offNamed(Routes().note);
+      // 生词本，笔记
+      // Get.to(NotePage(), transition: Transition.fade, duration: Duration(seconds: 1));
+      Get.to(Routes.routes[13].page(), transition: Transition.fade, duration: Duration(seconds: 1));
     } else if (index == 3) {
-      // Get.offNamed(Routes().word);
+      // 跳转学习单词页面，传animationController参数
+      Get.to(() => WordReviewPage(animationController: animationController), transition: Transition.fade, duration: Duration(seconds: 1));
+      // Get.to(Routes.routes[12].page(), transition: Transition.fade, duration: Duration(seconds: 1));
     }
   }
 
-  // void startIntroAnimation() {
-  //   isInIntroAnimation.value = true;
-  //   update();
-  // }
-
-  // void endIntroAnimation() {
-  //   isInIntroAnimation.value = false;
-  //   update();
-  // }
 
   // 判断是否显示底部导航栏
   bool shouldShowBottomNavigationBar() {
+    // print("当前页面: ${currentPage.value}");
     if (currentPage.value == 'login' || currentPage.value == 'sign_up') {
       return false;
-     } //else if (isInIntroAnimation.value) {
-    //   return false;
-    // }
+     }
     return true;
   }
 
   @override
   void onClose() {
-    tabController.dispose();
+    topTabController.dispose();
+    bottomTabController.dispose();
     super.onClose();
   }
 

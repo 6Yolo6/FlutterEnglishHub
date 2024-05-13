@@ -1,12 +1,14 @@
 import 'package:flutter_english_hub/controller/navigation_controller.dart';
-import 'package:flutter_english_hub/page/introduction_animation/components/care_view.dart';
+import 'package:flutter_english_hub/main.dart';
+import 'package:flutter_english_hub/page/introduction_animation/components/learning_resources_view.dart';
 import 'package:flutter_english_hub/page/introduction_animation/components/center_next_button.dart';
-import 'package:flutter_english_hub/page/introduction_animation/components/mood_diary_vew.dart';
-import 'package:flutter_english_hub/page/introduction_animation/components/relax_view.dart';
-import 'package:flutter_english_hub/page/introduction_animation/components/splash_view.dart';
+import 'package:flutter_english_hub/page/introduction_animation/components/video_learning_view.dart';
+import 'package:flutter_english_hub/page/introduction_animation/components/word_Look_up_view.dart';
+import 'package:flutter_english_hub/page/introduction_animation/components/ready_view.dart';
 import 'package:flutter_english_hub/page/introduction_animation/components/top_back_skip_view.dart';
 import 'package:flutter_english_hub/page/introduction_animation/components/welcome_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_english_hub/service/storage_service.dart';
 import 'package:get/get.dart';
 
 class IntroductionAnimationScreen extends StatefulWidget {
@@ -25,48 +27,53 @@ class _IntroductionAnimationScreenState
 
   @override
   void initState() {
-    // 开始介绍动画
-    // controller.startIntroAnimation(); 
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 8));
-    _animationController?.animateTo(0.0);
-    super.initState();
+    _animationController = AnimationController(
+      vsync: this, // 使用当前的 TickerProvider 作为动画控制器的 vsync
+      duration: Duration(seconds: 8), // 动画持续时间为 8 秒
+    );
+    _animationController?.animateTo(0.0); // 将动画控制器的进度设置为 0
+    super.initState(); 
   }
 
   @override
   void dispose() {
-    // 结束介绍动画
-    // controller.endIntroAnimation(); 
     _animationController?.dispose();
     super.dispose();
   }
 
+  // 构建整个动画引导界面
   @override
   Widget build(BuildContext context) {
-    print(_animationController?.value);
+    // 设置是否显示全局悬浮按钮为false
+    Get.find<MyApp>().setShouldShowFloatingButton(false, context);
+    // 打印动画控制器的值
+    print("动画控制器的值: ${_animationController!.value}");
     return Scaffold(
-      backgroundColor: Color(0xffF7EBE1),
+      // 使用RGB(253,251,228)
+      backgroundColor: Color(0xffFDFBE4),
+      // backgroundColor: Color(0xffF7EBE1),
       body: ClipRect(
         child: Stack(
           children: [
-            SplashView(
+            ReadyView(
               animationController: _animationController!,
             ),
-            RelaxView(
+            WordLookUpView(
               animationController: _animationController!,
             ),
-            CareView(
+            LearningResourcesView(
               animationController: _animationController!,
             ),
-            MoodDiaryVew(
+            VideoLearningView(
               animationController: _animationController!,
             ),
             WelcomeView(
               animationController: _animationController!,
             ),
             TopBackSkipView(
-              onBackClick: _onBackClick,
-              onSkipClick: _onSkipClick,
+              onBackClick: _onBackClick, // 设置返回按钮的回调
+              onSkipClick: _onSkipClick, // 设置跳过按钮的回调
+              onGuestClick: _onGuestClick, // 设置游客按钮的回调
               animationController: _animationController!,
             ),
             CenterNextButton(
@@ -81,11 +88,19 @@ class _IntroductionAnimationScreenState
 
   // 点击跳过按钮
   void _onSkipClick() {
-    _animationController?.animateTo(0.8,
-        duration: Duration(milliseconds: 1200));
+    _animationController?.animateTo(0.8, // 跳转到 0.8 的动画进度
+        duration: Duration(milliseconds: 1200)); // 持续时间为 1200 毫秒
   }
 
-  // 点击返回按钮
+  // 点击游客按钮
+  void _onGuestClick() {
+    // 跳转到首页
+    controller.changePage(0, _animationController!);
+    // 更新标志位isFirstTime
+    Get.find<StorageService>().saveIsFirstTime(false);
+  }
+
+  // 点击返回按钮，
   void _onBackClick() {
     if (_animationController!.value >= 0 &&
         _animationController!.value <= 0.2) {

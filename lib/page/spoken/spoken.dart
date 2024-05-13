@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-// import 'package:media_kit/media_kit.dart';
-// import 'package:media_kit_video/media_kit_video.dart';
+import 'package:appinio_video_player/appinio_video_player.dart';
+import 'package:cached_video_player/cached_video_player.dart'; // 引入缓存视频播放器库
 
-import 'package:video_player/video_player.dart';
 
 class SpokenPage extends StatefulWidget {
   @override
@@ -15,28 +14,31 @@ class SpokenPage extends StatefulWidget {
 class _SpokenPageState extends State<SpokenPage> {
   // css文件内容
   String? _loadedCss;
-  // 创造一个[Player]来控制
-  // late final player = Player();
-  // 创建一个 [VideoController] 来处理来自 [Player] 的视频输出
-  // late final videoController = VideoController(player);
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  // 使用 CachedVideoPlayerController
+  late CachedVideoPlayerController cachedVideoPlayerController;
+  late CustomVideoPlayerController customVideoPlayerController;
+  Future<void>? _initializeVideoPlayerFuture;
+  String videoUrl = "https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/video/5f4d22ab-c5a5-40d6-b4cd-fbe1ba8e69da.mp4";
 
   @override
   void initState() {
     super.initState();
+    // 加载css文件
     _loadCssFile();
-    // player.open(Media('https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/video/5f4d22ab-c5a5-40d6-b4cd-fbe1ba8e69da.mp4'));
-    _controller = VideoPlayerController.network(
-      'https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/video/5f4d22ab-c5a5-40d6-b4cd-fbe1ba8e69da.mp4');
-    _initializeVideoPlayerFuture = _controller.initialize();
+    cachedVideoPlayerController = CachedVideoPlayerController.network(videoUrl);
+    _initializeVideoPlayerFuture = cachedVideoPlayerController.initialize();
+    customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: cachedVideoPlayerController, // 将缓存视频播放器控制器传递给 CustomVideoPlayerController
+    );
+
   }
 
   @override
   void dispose() {
-    // player.dispose();
+    cachedVideoPlayerController.dispose();
+    customVideoPlayerController.dispose();
     super.dispose();
-    _controller.dispose();
   }
 
   // 加载css文件
@@ -47,7 +49,6 @@ class _SpokenPageState extends State<SpokenPage> {
       _loadedCss = loadedCss;
     });
   }
-
 
   String getWordHtml() {
     return '''
@@ -95,7 +96,7 @@ class _SpokenPageState extends State<SpokenPage> {
   }
 
   // 构建音频播放的HTML代码片段
-String buildAudioHtml(String audioUrl) {
+  String buildAudioHtml(String audioUrl) {
   return '''
   <a style="float: left;margin-top: 8px;margin-right: 4px;" href="#" onclick="document.getElementById('audio').play(); return false;">
       <img src="https://hyf666.oss-cn-fuzhou.aliyuncs.com/english_hub/image/Sound.png" style="margin-bottom:-2px" border="0">
@@ -133,37 +134,66 @@ String buildAudioHtml(String audioUrl) {
         base64Encode(const Utf8Encoder().convert(contentWithCss));
 
     return Scaffold(
-      body: _loadedCss == null
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: WebView(
-                initialUrl: 'data:text/html;base64,$contentBase64',
-                javascriptMode: JavascriptMode.unrestricted,
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-              child: FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(_controller),
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
+      body: FutureBuilder(
+        future: _initializeVideoPlayerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Column(
+              children: [
+                // HTML Content with WebView
+                Expanded(
+                  child: WebView(
+                    initialUrl: 'data:text/html;base64,$contentBase64',
+                    javascriptMode: JavascriptMode.unrestricted, // 允许JavaScript
+                  ),
                 ),
-            ),
-          ],
-        ),
+                // Video Player
+                Expanded(
+                  child: CustomVideoPlayer(
+                    customVideoPlayerController: customVideoPlayerController,
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
+
+    // return Scaffold(
+    //   body: _loadedCss == null
+    //       ? const Center(child: CircularProgressIndicator())
+    //       : Column(
+    //       crossAxisAlignment: CrossAxisAlignment.stretch,
+    //       children: [
+    //         Expanded(
+    //           child: WebView(
+    //             initialUrl: 'data:text/html;base64,$contentBase64',
+    //             javascriptMode: JavascriptMode.unrestricted, // 允许JavaScript
+    //           ),
+    //         ),
+    //         SizedBox(
+    //           width: MediaQuery.of(context).size.width,
+    //           height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+    //           child: FutureBuilder(
+    //               future: _initializeVideoPlayerFuture,
+    //               builder: (context, snapshot) {
+    //                 if (snapshot.connectionState == ConnectionState.done) {
+    //                   return AspectRatio(
+    //                     aspectRatio: _controller.value.aspectRatio,
+    //                     child: VideoPlayer(_controller),
+    //                   );
+    //                 } else {
+    //                   return Center(child: CircularProgressIndicator()); // 加载中
+    //                 }
+    //               },
+    //             ),
+    //         ),
+    //       ],
+    //     ),
+    // );
   }
 }
 

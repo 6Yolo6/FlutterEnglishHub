@@ -1,3 +1,4 @@
+import 'package:flutter_english_hub/page/navigation/home_navigation.dart';
 import 'package:flutter_english_hub/service/auth_service.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +17,7 @@ class AuthController extends GetxController {
       isLoggedIn((await authService.loginService(username, password)) as bool?);
       // 成功登录后，跳转到home_navigation
       if (isLoggedIn.value) {
-        Get.offAllNamed('/home_navigation');
+        Get.to(() => HomeNavigation(), transition: Transition.fade, duration: Duration(milliseconds: 1000));
       }
     } finally {
       isLoading(false);

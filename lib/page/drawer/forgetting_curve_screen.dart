@@ -56,7 +56,7 @@ class _ForgettingCurveScreenState extends State<ForgettingCurveScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('遗忘曲线'),
+        title: Text('遗忘曲线'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

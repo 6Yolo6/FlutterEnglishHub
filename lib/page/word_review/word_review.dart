@@ -1,124 +1,266 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_english_hub/controller/word_book_controller.dart';
+import 'package:flutter_english_hub/page/drawer/forgetting_curve_screen.dart';
+import 'package:flutter_english_hub/page/widget/title_view.dart';
+import 'package:flutter_english_hub/model/WordBook.dart';
+import 'package:flutter_english_hub/page/word_review/word_book_view.dart';
+import 'package:flutter_english_hub/page/word_review/word_list.dart';
+import 'package:flutter_english_hub/theme/app_theme.dart';
 import 'package:get/get.dart'; // 用于状态管理和路由
 
-class VocabularyBookPage extends StatefulWidget {
+class WordReviewPage extends StatefulWidget {
+  const WordReviewPage({super.key, this.animationController});
+
+  final AnimationController? animationController;
+
   @override
-  _VocabularyBookPageState createState() => _VocabularyBookPageState();
+  _WordReviewPageState createState() => _WordReviewPageState();
 }
 
-class _VocabularyBookPageState extends State<VocabularyBookPage> {
-  final TextEditingController _searchController = TextEditingController(); // 搜索框控制器
-  final List<String> _categories = ['四级', '六级', '考研']; // 分类标签
-  final Map<String, List<VocabularyBook>> _books = {
-    '四级': [
-      VocabularyBook('CET 4 英语词汇', '2607词', 'assets/cet4_vocab.png'),
-      VocabularyBook('CET 4 考前必刷词', '1116词', 'assets/cet4_essential.png'),
-      VocabularyBook('CET 4 考前急救词包', '193词', 'assets/cet4_quick.png'),
-    ],
-    '六级': [
-      // 示例
-    ],
-    '考研': [
-      // 示例
-    ],
-  };
+class _WordReviewPageState extends State<WordReviewPage> {
+  double topBarOpacity = 0.0;
 
-  String _selectedCategory = '四级'; // 默认选择的分类
+  List<Widget> listViews = <Widget>[];
+  final ScrollController scrollController = ScrollController();
+
+  String selectedBook = "Word Book Title"; // Placeholder for book title
+  late Future<WordBook> wordBook;
+  late WordBookController wordBookController = Get.find<WordBookController>();
+
+  // 单词书对象(模拟数据)
+  // final WordBook wordBook =
+  //     WordBook(54, 'CET 4 考前急救词包', 12, 30, 1507, 2000, 250, 58, 90);
+
+  @override
+  void initState() {
+    // addAllListData();
+
+    scrollController.addListener(() {
+      if (scrollController.offset >= 24) {
+        if (topBarOpacity != 1.0) {
+          setState(() {
+            topBarOpacity = 1.0;
+          });
+        }
+      } else if (scrollController.offset <= 24 &&
+          scrollController.offset >= 0) {
+        if (topBarOpacity != scrollController.offset / 24) {
+          setState(() {
+            topBarOpacity = scrollController.offset / 24;
+          });
+        }
+      } else if (scrollController.offset <= 0) {
+        if (topBarOpacity != 0.0) {
+          setState(() {
+            topBarOpacity = 0.0;
+          });
+        }
+      }
+    });
+    super.initState();
+  }
+
+  void addAllListData(WordBook wordBook) {
+    const int count = 4;
+    // 顶部标题视图
+    listViews.add(
+      TitleView(
+        titleTxt: '今日还未打卡',
+        subTxt: '详情',
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval((1 / count) * 0, 1.0,
+                curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+    // 单词书视图
+    listViews.add(
+      WordBookView(
+        wordBook: wordBook,
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval((1 / count) * 1, 1.0,
+                curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+    // 单词书选项卡视图
+    listViews.add(
+      WordBookScreen(
+        wordBookId: wordBook.id,
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval((1 / count) * 1, 1.0,
+                curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<WordBook> fetchWordBook() async {
+    return wordBookController.fetchWordBook();
+  }
+
+  Widget getReviewListView() {
+    return FutureBuilder<WordBook>(
+      future: fetchWordBook(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // 加载中
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // 错误处理
+        } else {
+          WordBook wordBook = snapshot.data!;
+          listViews = []; // 清空列表
+          addAllListData(wordBook); // 使用WordBook对象添加数据
+          return ListView.builder(
+            controller: scrollController,
+            padding: const EdgeInsets.only(
+              top: 5,
+              bottom: 5,
+            ),
+            itemCount: listViews.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext context, int index) {
+              widget.animationController?.forward();
+              return listViews[index];
+            },
+          );
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('添加单词本'), // 页面标题
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(40), // 搜索框高度
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: '搜索单词书', // 搜索框提示
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: Icon(Icons.search), // 搜索图标
-              ),
-              onChanged: (value) {
-                setState(() {
-                  // 当搜索内容改变时，可以添加搜索逻辑
-                });
-              },
-            ),
-          ),
+    return Container(
+      color: AppTheme.white,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('学习'),
         ),
-      ),
-      body: Column(
-        children: [
-          _buildCategoryTabs(), // 构建分类标签栏
-          Expanded(child: _buildVocabularyBookList()), // 构建单词书列表
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryTabs() {
-    return TabBar(
-      isScrollable: true, // 标签可左右滑动
-      onTap: (index) {
-        setState(() {
-          _selectedCategory = _categories[index]; // 更新选中的分类
-        });
-      },
-      tabs: _categories.map((category) => Tab(text: category)).toList(), // 构建标签
-    );
-  }
-
-  Widget _buildVocabularyBookList() {
-    return ListView.builder(
-      itemCount: _books[_selectedCategory]!.length,
-      itemBuilder: (context, index) {
-        var book = _books[_selectedCategory]![index];
-        return ListTile(
-          leading: Image.asset(book.imagePath), // 自定义图片
-          title: Text(book.name), // 单词书名称
-          subtitle: Text(book.wordCount), // 单词数量
-          onTap: () => _showLearningPlanDialog(book), // 点击单词书显示弹窗
-        );
-      },
-    );
-  }
-
-  void _showLearningPlanDialog(VocabularyBook book) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('设置学习计划'), // 弹窗标题
-          content: Text('设置每天背单词的数量'), // 弹窗内容
-          actions: [
-            TextButton(
-              onPressed: () {
-                // 确定学习计划逻辑
-                Navigator.pop(context); // 关闭弹窗
-              },
-              child: Text('确定'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context), // 取消按钮
-              child: Text('取消'),
+        body: Stack(
+          children: <Widget>[
+            getReviewListView(),
+            SizedBox(
+              height: MediaQuery.of(context).padding.bottom,
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
-// 单词书类
-class VocabularyBook {
-  final String name; // 单词书名称
-  final String wordCount; // 单词数量
-  final String imagePath; // 自定义图片路径
+class WordBookScreen extends StatelessWidget {
 
-  VocabularyBook(this.name, this.wordCount, this.imagePath);
+  final int wordBookId;
+
+  const WordBookScreen({
+    super.key,
+    required this.animationController,
+    required this.animation, required this.wordBookId,
+  });
+
+  final AnimationController? animationController;
+  final Animation<double>? animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: animationController!,
+        builder: (BuildContext context, Widget? child) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // 使用 Transform 来实现标题的动画效果
+              Transform(
+                transform: Matrix4.translationValues(
+                    0.0, 30 * (1.0 - animation!.value), 0.0),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 25.0, top: 5.0, bottom: 10),
+                  child: Text(
+                    '学习进度',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              // 使用 Transform 来实现卡片的动画效果
+              Transform(
+                transform: Matrix4.translationValues(
+                    0.0, 30 * (1.0 - animation!.value), 0.0),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 5, bottom: 20),
+                  child: Container(
+                    // 卡片背景颜色、圆角、阴影
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          bottomLeft: Radius.circular(10.0),
+                          bottomRight: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                            color: AppTheme.grey.withOpacity(0.2),
+                            offset: const Offset(1.1, 1.1),
+                            blurRadius: 10.0),
+                      ],
+                    ),
+                    // 单词书的选项卡
+                    child: Column(
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () {
+                            Get.to(() => WordListPage(
+                              wordBookId: wordBookId,
+                            ), transition: Transition.fade, duration: Duration(seconds: 1));
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.list_alt_outlined),
+                            title: Text('单词列表'),
+                            trailing: Icon(Icons.arrow_forward_ios),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            // 在这里处理点击事件
+                            Get.to(() => ForgettingCurveScreen(), transition: Transition.fade, duration: Duration(seconds: 1));
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.bar_chart_outlined),
+                            title: Text('进度统计'),
+                            trailing: Icon(Icons.arrow_forward_ios),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            // 在这里处理点击事件
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.settings),
+                            title: Text('学习设置'),
+                            trailing: Icon(Icons.arrow_forward_ios),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
 }

@@ -19,7 +19,7 @@ class ApiService {
   ApiService() {
     dio
       // ..options.baseUrl = 'http://localhost:8899/englishhub/'
-      // pdcn2
+      // WLAN2 pdcn
       ..options.baseUrl = 'http://192.168.1.237:8899/englishhub/'
       // 垃圾桶
       // ..options.baseUrl = 'http://192.168.43.119:8899/englishhub/'
@@ -36,7 +36,14 @@ class ApiService {
         },
         // 响应拦截器
         onResponse: (response, handler) {
-          // 返回结果中的data字段
+          final storageService = Get.find<StorageService>();
+
+          // 检查是否有新令牌
+          if (response.headers.value("token") != null) {
+            String? newToken = response.headers.value("token");
+            storageService.saveToken(newToken!); // 保存新令牌
+          }
+
           print('请求结果: $response');
           return handler.next(response);
         },

@@ -18,6 +18,11 @@ class User {
     required this.avatar,
   });
 
+  @override
+  String toString() {
+    return 'User{id: $id, etc: $etc, username: $username, email: $email, telephone: $telephone, sex: $sex, avatar: $avatar}';
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
