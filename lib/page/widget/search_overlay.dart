@@ -1,9 +1,16 @@
 
 
 // 搜索框组件
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_english_hub/controller/word_controller.dart';
 import 'package:flutter_english_hub/controller/words_controller.dart';
+import 'package:flutter_english_hub/model/Word.dart';
+import 'package:flutter_english_hub/model/WordReview.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class SearchOverlay extends StatefulWidget {
 
@@ -17,13 +24,69 @@ class SearchOverlay extends StatefulWidget {
 }
 
 class SearchOverlayState extends State<SearchOverlay> {
-  final WordsController _wordsController = Get.find<WordsController>();
 
+  final WordController _wordController = Get.find<WordController>();
   final TextEditingController _controller = TextEditingController();
-  // 静态测试数据
-  final List<String> _searchHistory = ['apple', 'banana', 'orange', 'pear', 'grape', 'watermelon', 'strawberry', 'cherry', 'mango', 'pineapple'];
-  // final List<String> _searchHistory = [];
   final FocusNode _focusNode = FocusNode();
+  List<WordReview> _searchResults = [];
+  List<WordReview> _searchHistory = [];
+  bool _isLoading = false;
+  late AudioPlayer _audioPlayer;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _controller.addListener(_onSearchChanged);
+    _fetchSearchHistory();
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _search(_controller.text);
+    });
+  }
+
+  Future<void> _fetchSearchHistory() async {
+    List<WordReview> history = await _wordController.getSearchHistory();
+    setState(() {
+      _searchHistory = history;
+      print('搜索历史：$_searchHistory');
+    });
+  }
+  
+   void _search(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults.clear();
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<WordReview> wordsList = await _wordController.searchByName(query);
+    if (mounted) {
+      setState(() {
+        _searchResults = wordsList;
+        print('搜索结果：$_searchResults');
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onSearchChanged);
+    _debounce?.cancel();
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +100,9 @@ class SearchOverlayState extends State<SearchOverlay> {
           alignment: Alignment.topCenter, // 定格在顶部
           child: FractionallySizedBox(
             widthFactor: 1, // 宽度占满屏幕
-            // 高度占比，由搜索历史列表高度动态计算
-            heightFactor: _searchHistory.length > 5 ? 0.6 : _searchHistory.length * 0.1 + 0.07,
+            // 高度占比，由搜索结果列表高度动态计算
+            heightFactor: _searchResults.length > 5 ? 0.6 : _searchResults.length * 0.1 + 0.15,
+            // heightFactor: _searchResults.isNotEmpty ? 0.6 : 0.2, // 动态计算高度
             child: Container(
               // 背景颜色与 Tab 栏一致
               color: Colors.blue[400],
@@ -106,10 +170,12 @@ class SearchOverlayState extends State<SearchOverlay> {
                           const Text('单词搜索历史',
                               style: TextStyle(color: Colors.black)), // 标题
                           TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               // 清除搜索历史
-                              _wordsController.clearSearchHistory();
-                              setState(() {}); // 刷新界面
+                              _wordController.clearSearchHistory();
+                              setState(() {
+                                _searchHistory.clear();
+                              }); // 刷新界面
                             },
                             child: const Text('全部删除',
                                 style: TextStyle(color: Colors.black)), // 全部删除
@@ -118,9 +184,7 @@ class SearchOverlayState extends State<SearchOverlay> {
                             onPressed: () {
                               // 关闭搜索历史列表
                               _searchHistory.clear();
-                              setState(() {
-
-                              });
+                              setState(() {});
                             },
                             child: const Text('关闭',
                                 style: TextStyle(color: Colors.black)),
@@ -129,17 +193,37 @@ class SearchOverlayState extends State<SearchOverlay> {
                       ),
                     ),
                     // 搜索历史列表
-                    Expanded(
+                    Flexible(
                       child: Material(
-                        // type: MaterialType.transparency,
                         color: Colors.white,
                         child: ListView.builder(
                           itemCount: _searchHistory.length,
                           itemBuilder: (context, index) {
+                            final word = _searchHistory[index];
                             return ListTile(
-                              title: Text(_searchHistory[index]),
+                              title: Text(word.word),
+                              subtitle: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    if (word.phoneticUk!='')
+                                      TextSpan(text: 'UK: ${word.phoneticUk}, '),
+                                    if (word.phoneticUs!='')
+                                      TextSpan(text: 'US: ${word.phoneticUs}'),
+                                  ],
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.volume_up, color: Colors.blue),
+                                onPressed: () {
+                                  if (word.audioUrl == null || word.audioUrl!.isEmpty) {
+                                    Get.snackbar('', '暂无发音');
+                                  } else {
+                                    _audioPlayer.play(UrlSource(word.audioUrl!));
+                                  }
+                                },
+                              ),
                               onTap: () {
-                                _search(_searchHistory[index]); // 点击历史项进行搜索
+                                _search(word.word);
                               },
                             );
                           },
@@ -147,6 +231,47 @@ class SearchOverlayState extends State<SearchOverlay> {
                       ),
                     ),
                   ],
+                    // 搜索结果列表
+                  if (_isLoading)
+                    Center(child: CircularProgressIndicator())
+                  else if (_searchResults.isNotEmpty)
+                    Flexible(
+                      child: Material(
+                        color: Colors.white,
+                        child: ListView.builder(
+                          itemCount: _searchResults.length,
+                          itemBuilder: (context, index) {
+                            final word = _searchResults[index];
+                            return ListTile(
+                              title: Text(word.word),
+                              subtitle: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    if (word.phoneticUk != '')
+                                      TextSpan(text: 'UK: ${word.phoneticUk}, '),
+                                    if (word.phoneticUs != '')
+                                      TextSpan(text: 'US: ${word.phoneticUs}'),
+                                  ],
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.volume_up, color: Colors.blue),
+                                onPressed: () {
+                                  if (word.audioUrl == null || word.audioUrl!.isEmpty) {
+                                    Get.snackbar('', '暂无发音');
+                                  } else {
+                                    _audioPlayer.play(UrlSource(word.audioUrl!));
+                                  }
+                                },
+                              ),
+                              onTap: () {
+                                _search(word.word);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -156,9 +281,5 @@ class SearchOverlayState extends State<SearchOverlay> {
     );
   }
 
-  void _search(String query) {
-    var wordsList = _wordsController.searchByName(query, 1, 10);
-    print('wordsList: $wordsList');
-  }
 }
 

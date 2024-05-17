@@ -1,8 +1,11 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:flutter_english_hub/page/article/article_list.dart';
 import 'package:flutter_english_hub/page/daily_sentence/daily_sentence_list.dart';
 import 'package:flutter_english_hub/page/drawer/favorite.dart';
 import 'package:flutter_english_hub/page/reading/article.dart';
+import 'package:flutter_english_hub/page/video/video_detail.dart';
+import 'package:flutter_english_hub/page/video/video_list.dart';
 import 'package:get/get.dart';
 import 'package:flutter_english_hub/page/home_screen.dart';
 import 'package:flutter_english_hub/page/introduction_animation/introduction_animation_screen.dart';
@@ -14,7 +17,7 @@ import 'package:flutter_english_hub/page/writing/writing.dart';
 import 'package:flutter_english_hub/page/navigation/home_navigation.dart';
 import 'package:flutter_english_hub/page/drawer/feedback_screen.dart';
 import 'package:flutter_english_hub/page/drawer/help_screen.dart';
-import 'package:flutter_english_hub/page/drawer/forgetting_curve_screen.dart';
+import 'package:flutter_english_hub/page/word_review/forgetting_curve_screen.dart';
 import 'package:flutter_english_hub/page/translation/translation.dart';
 import 'package:flutter_english_hub/page/word_review/word_review.dart';
 
@@ -83,14 +86,19 @@ class Routes {
   // 学习单词
   static String wordReview = '/word_review';
 
-  // 新闻页面
-  static String article = '/article';
+  // 新闻列表
+  static String articleList = '/article_list';
 
   // 收藏页面
   static String favorite = '/favorite';
 
   // 每日一句列表
   static String dailySentenceList = '/daily_sentence_list';
+
+  // 视频列表
+  static String videoList = '/video_list';
+
+  
 
   static final routes = [
     GetPage(
@@ -146,8 +154,8 @@ class Routes {
       page: () => WordReviewPage(),
     ),
     GetPage(
-      name: Routes.article,
-      page: () => const ArticlePage(),
+      name: Routes.articleList,
+      page: () => ArticleListPage(),
     ),
     GetPage(
       name: Routes.favorite,
@@ -156,6 +164,14 @@ class Routes {
     GetPage(
       name: Routes.dailySentenceList,
       page: () => const DailySentenceList(),
+    ),
+    GetPage(
+      name: Routes.videoList,
+      page: () => const VideoListPage(),
+    ),
+    GetPage(
+      name: Routes.articleList,
+      page: () => ArticleListPage(),
     ),
   ];
 }

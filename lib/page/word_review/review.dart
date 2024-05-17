@@ -1,172 +1,145 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_english_hub/theme/app_theme.dart';
+import 'package:flutter_english_hub/page/word_review/word_detail.dart';
 import 'package:get/get.dart';
+import 'package:flutter_english_hub/theme/app_theme.dart';
+import 'package:flutter_english_hub/model/WordReview.dart';
+import 'package:flutter_english_hub/controller/word_review_controller.dart';
 
 class ReviewPage extends StatefulWidget {
-  final AnimationController? animationController;
-  // 单词书ID
   final int wordBookId;
+  final int dailyNewWords;
+  final int dailyReviewWords;
 
-  const ReviewPage(
-      {Key? key, this.animationController, required this.wordBookId});
+  const ReviewPage({
+    Key? key,
+    required this.wordBookId,
+    required this.dailyNewWords,
+    required this.dailyReviewWords,
+  }) : super(key: key);
 
   @override
   _ReviewPageState createState() => _ReviewPageState();
 }
 
 class _ReviewPageState extends State<ReviewPage> with TickerProviderStateMixin {
-  Animation<double>? topBarAnimation;
+  late AnimationController animationController;
+  late WordReviewController wordReviewController = Get.find<WordReviewController>();
+
   double topBarOpacity = 0.0;
-
-  // 当前单词索引
   int currentWordIndex = 0;
-
-  // 单词及音标，释义对象列表
-  List<Word> words = [
-    Word('abrupt', '[əˈbrʌpt]', '突然的'),
-    Word('absurd', '[əbˈsɜːrd]', '荒谬的'),
-    Word('abundant', '[əˈbʌndənt]', '丰富的'),
-    Word('accessible', '[əkˈsesəbl]', '可接近的'),
-  ];
-
-  // 手势识别
-  void onSwipe(Direction direction) {
-    setState(() {
-      // Update the word status based on the direction of the swipe
-      // And load the next word
-    });
-  }
-
-  List<Widget> listViews = <Widget>[];
-  final ScrollController scrollController = ScrollController();
+  List<WordReview> words = [];
+  bool showDefinition = false; // 控制释义显示
+    late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
-    // 初始化动画控制器
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
-    // 监听滚动事件，实现顶部导航栏渐变
-    scrollController.addListener(() {
-      if (scrollController.offset >= 24) {
-        if (topBarOpacity != 1.0) {
-          setState(() {
-            topBarOpacity = 1.0;
-          });
-        }
-      } else if (scrollController.offset <= 24 &&
-          scrollController.offset >= 0) {
-        if (topBarOpacity != scrollController.offset / 24) {
-          setState(() {
-            topBarOpacity = scrollController.offset / 24;
-          });
-        }
-      } else if (scrollController.offset <= 0) {
-        if (topBarOpacity != 0.0) {
-          setState(() {
-            topBarOpacity = 0.0;
-          });
-        }
-      }
-    });
-
+    animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+        _audioPlayer = AudioPlayer();
+    _fetchTodayWords();
     super.initState();
   }
-
-  void addAllListData() {
-    const int count = 4;
-
-    // 背单词主体卡片视图
-    listViews.add(
-      WordView(
-        word: words[currentWordIndex],
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval((1 / count) * 1, 1.0,
-                curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
+  
+  // 获取今日单词
+  Future<void> _fetchTodayWords() async {
+    words = await wordReviewController.fetchTodayWords(
+      widget.wordBookId,
+      widget.dailyNewWords,
+      widget.dailyReviewWords,
     );
-    // 底部4个背单词状态视图
-    listViews.add(
-      StatusView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval((1 / count) * 2, 1.0,
-                curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
+    setState(() {});
   }
 
-  Future<bool> getData() async {
-    // 用于获取今日要背的单词数据，这里还未实现，暂时模拟延迟
-    await Future<dynamic>.delayed(const Duration(milliseconds: 50));
-    return true;
+  // 更新单词状态
+  void _updateWordStatus(int status) async {
+    if (currentWordIndex < words.length) {
+      print('wordId: ${words[currentWordIndex].id}');
+      print('wordBookId: ${widget.wordBookId}');
+      print('status: $status');
+      await wordReviewController.updateWordStatus(words[currentWordIndex].id, widget.wordBookId, status);
+      setState(() {
+        currentWordIndex++;
+        showDefinition = false; // 重置释义显示
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppTheme.white,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text('学习'),
-        ),
-        body: Stack(
-          children: <Widget>[
-            getAppBarView(),
-            getReviewView(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: AppTheme.white,
+      appBar: AppBar(
+        title: const Text('学习'),
+        // 右侧图标，加入生词本
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bookmark_border),
+            onPressed: () {
+              // 添加到生词本
+            },
+          ),
+        ],
+      ),
+      body: Stack(
+        children: <Widget>[
+          getAppBarView(),
+          getReviewView(),
+          SizedBox(
+            height: MediaQuery.of(context).padding.bottom,
+          )
+        ],
       ),
     );
   }
 
-  // 背单词主体视图
   Widget getReviewView() {
-    return FutureBuilder<bool>(
-      future: getData(),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox();
-        } else {
-          return ListView.builder(
-            controller: scrollController,
-            padding: const EdgeInsets.only(
-              top: 5,
-              bottom: 5,
-            ),
-            itemCount: listViews.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext context, int index) {
-              widget.animationController?.forward();
-              return listViews[index];
-            },
-          );
-        }
-      },
+    if (words.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (currentWordIndex >= words.length) {
+      return Center(child: Text('今日单词学习完成'));
+    }
+
+    final word = words[currentWordIndex];
+
+    return ListView(
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              showDefinition = !showDefinition; // 切换释义显示
+            });
+          },
+          child: WordCard(word: word, showDefinition: showDefinition),
+        ),
+        StatusView(
+          onStatusSelected: (status) {
+            _updateWordStatus(status);
+          },
+        ),
+      ],
     );
   }
 
-  // 顶部返回按钮、背单词进度视图
   Widget getAppBarView() {
+    double progressValue = (words.isNotEmpty) ? currentWordIndex / words.length : 0.0;
+    progressValue = progressValue.isNaN ? 0.0 : progressValue; // 确保值不为 NaN
+
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController!,
+          animation: animationController,
           builder: (BuildContext context, Widget? child) {
             return FadeTransition(
-              opacity: topBarAnimation!,
+              opacity: Tween<double>(begin: 0.0, end: 1.0).animate(animationController),
               child: Transform(
                 transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation!.value), 0.0),
+                    0.0, 30 * (1.0 - Tween<double>(begin: 0.0, end: 1.0).animate(animationController).value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppTheme.white.withOpacity(topBarOpacity),
@@ -194,20 +167,16 @@ class _ReviewPageState extends State<ReviewPage> with TickerProviderStateMixin {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            // 返回按钮
                             IconButton(
                                 icon: const Icon(Icons.arrow_back),
                                 onPressed: () {
-                                  // 返回上一页
                                   Get.back();
                                 }),
-                            // 学习的单词进度条
                             Expanded(
                               child: LinearProgressIndicator(
-                                backgroundColor: Colors.grey[200],
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                    Colors.blue),
-                                value: currentWordIndex / words.length,
+                                backgroundColor: Get.theme.colorScheme.shadow.withOpacity(0.2),
+                                valueColor: AlwaysStoppedAnimation<Color>(Get.theme.colorScheme.secondary),
+                                value: progressValue,
                               ),
                             ),
                             IconButton(
@@ -241,9 +210,6 @@ class _ReviewPageState extends State<ReviewPage> with TickerProviderStateMixin {
             TextButton(
               child: const Text('关闭'),
               onPressed: () {
-                // 关闭对话框
-                // Navigator.of(context).pop();
-                // get的弹窗关闭方法
                 Get.back();
               },
             ),
@@ -254,175 +220,131 @@ class _ReviewPageState extends State<ReviewPage> with TickerProviderStateMixin {
   }
 }
 
-class Word {
-  final String word;
-  final String phonetic;
-  final String definition;
+class WordCard extends StatelessWidget {
+  final WordReview word;
+  final bool showDefinition;
 
-  Word(this.word, this.phonetic, this.definition);
-}
-
-class StatusView extends StatelessWidget {
-  final Animation<double> animation;
-  final AnimationController animationController;
-
-  const StatusView(
-      {Key? key, required this.animation, required this.animationController})
-      : super(key: key);
+  WordCard({Key? key, required this.word, required this.showDefinition}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animationController!,
-      builder: (BuildContext context, Widget? child) {
-        return FadeTransition(
-          opacity: animation!,
-          child: Transform(
-            transform: Matrix4.translationValues(
-                0.0, 30 * (1.0 - animation!.value), 0.0),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 10, bottom: 18),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0),
-                      topRight: Radius.circular(68.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: AppTheme.grey.withOpacity(0.2),
-                        offset: const Offset(1.1, 1.1),
-                        blurRadius: 10.0),
-                  ],
-                ),
-                child: Column(
-                  children: <Widget>[
-                    // 单词状态ui，忘记，模糊，认识，掌握，且分别有图标
-                    Row(
-                      children: <Widget>[
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            // 忘记
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.blur_on),
-                          onPressed: () {
-                            // 模糊
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.check),
-                          onPressed: () {
-                            // 认识
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.star),
-                          onPressed: () {
-                            // 掌握
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              word.word,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 8),
+            Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          word.phoneticUk!,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
           ),
-        );
-      },
-    );
-  }
-}
-
-class WordView extends StatelessWidget {
-  final Word word;
-  final Animation<double> animation;
-  final AnimationController animationController;
-
-  const WordView(
-      {Key? key,
-      required this.word,
-      required this.animation,
-      required this.animationController})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: animation,
-      child: Transform(
-        transform:
-            Matrix4.translationValues(0.0, 50 * (1.0 - animation.value), 0.0),
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
-          child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // 居中显示单词，换行显示音标，换行显示释义
-                Center(
-                  child: Text(
-                    word.word,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+        ),
+        Text(
+          word.phoneticUs!,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    ),
+            if (showDefinition) ...[
+              const SizedBox(height: 8),
+              Text(
+                word.definition,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
                 ),
-                const SizedBox(height: 8),
-                Center(
-                  child: Text(
-                    word.phonetic,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: Text(
-                    word.definition,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ],
+              ),
+            ],
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(() => WordDetailPage(word: word));
+              },
+              child: Text('显示详细释义'),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-enum Direction { left, right, up, down }
+class StatusView extends StatelessWidget {
+  final Function(int) onStatusSelected;
 
-class WordCard extends StatelessWidget {
-  // Add your word data parameters
-
-  WordCard({Key? key}) : super(key: key);
+  StatusView({Key? key, required this.onStatusSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Build your word card UI
-    return const Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Text('abrupt'), // Replace with your data
-          // Add phonetics, meaning, example, etc.
+          Column(
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  onStatusSelected(1); // 忘记
+                },
+              ),
+              Text('忘记'),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.blur_on),
+                onPressed: () {
+                  onStatusSelected(2); // 模糊
+                },
+              ),
+              Text('模糊'),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () {
+                  onStatusSelected(3); // 认识
+                },
+              ),
+              Text('认识'),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.star),
+                onPressed: () {
+                  onStatusSelected(4); // 掌握
+                },
+              ),
+              Text('掌握'),
+            ],
+          ),
         ],
       ),
     );
   }
 }
+
+

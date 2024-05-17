@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_english_hub/controller/word_book_controller.dart';
-import 'package:flutter_english_hub/page/drawer/forgetting_curve_screen.dart';
+import 'package:flutter_english_hub/page/word_review/forgetting_curve_screen.dart';
 import 'package:flutter_english_hub/page/widget/title_view.dart';
 import 'package:flutter_english_hub/model/WordBook.dart';
 import 'package:flutter_english_hub/page/word_review/word_book_view.dart';
@@ -140,11 +140,11 @@ class _WordReviewPageState extends State<WordReviewPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppTheme.white,
+      color: Get.theme.scaffoldBackgroundColor,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('学习'),
+          title: Text('学习'),
         ),
         body: Stack(
           children: <Widget>[
@@ -201,11 +201,11 @@ class WordBookScreen extends StatelessWidget {
                     0.0, 30 * (1.0 - animation!.value), 0.0),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 5, bottom: 20),
+                      left: 15, right: 15, top: 5, bottom: 20),
                   child: Container(
                     // 卡片背景颜色、圆角、阴影
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
+                      color: Get.theme.scaffoldBackgroundColor,
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(10.0),
                           bottomLeft: Radius.circular(10.0),
@@ -213,7 +213,7 @@ class WordBookScreen extends StatelessWidget {
                           topRight: Radius.circular(10.0)),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                            color: AppTheme.grey.withOpacity(0.2),
+                            color: Get.theme.shadowColor.withOpacity(0.2),
                             offset: const Offset(1.1, 1.1),
                             blurRadius: 10.0),
                       ],

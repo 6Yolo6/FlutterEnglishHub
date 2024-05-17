@@ -42,11 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // // 设置是否显示全局悬浮按钮为true
     // Get.find<MyApp>().setShouldShowFloatingButton(true, context);
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
+    // var brightness = MediaQuery.of(context).platformBrightness;
+    // bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-      backgroundColor:
-          isLightMode == true ? AppTheme.white : AppTheme.nearlyBlack,
+      backgroundColor:Get.theme.scaffoldBackgroundColor,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: Column(
@@ -86,38 +85,43 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget appBar() {
+    // var brightness = MediaQuery.of(context).platformBrightness;
+    // bool isLightMode = brightness == Brightness.light;
     return SizedBox(
       // 顶部AppBar高度，
       height: AppBar().preferredSize.height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 1),
-            child: Container(
-              width: AppBar().preferredSize.height - 8,
-              height: AppBar().preferredSize.height - 8,
+      child: Container(
+        color: Get.theme.scaffoldBackgroundColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 8, left: 1),
+              child: Container(
+                width: AppBar().preferredSize.height - 8,
+                height: AppBar().preferredSize.height - 8,
+              ),
             ),
-          ),
-          Expanded(
-            child: TabBar(
-              controller: _navigationController.topTabController,
-              tabs: [
-                Tab(text: "Home".tr),
-                Tab(text: "Listening".tr),
-                Tab(text: "Reading".tr),
-                Tab(text: "Speaking".tr),
-              ],
+            Expanded(
+              child: TabBar(
+                controller: _navigationController.topTabController,
+                tabs: [
+                  Tab(text: "Home".tr),
+                  Tab(text: "Listening".tr),
+                  Tab(text: "Reading".tr),
+                  Tab(text: "Speaking".tr),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // 跳转到搜索页面
-              print('点击顶部搜索');
-            },
-          ),
-        ],
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                // 跳转到搜索页面
+                print('点击顶部搜索');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

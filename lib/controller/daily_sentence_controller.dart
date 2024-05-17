@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 class DailySentenceController extends GetxController {
   final DailySentenceService dailySentenceService = Get.find<DailySentenceService>();
-  // var dailySentences = <DailySentence>[].obs;
   var currentPage = 1.obs;
 
 

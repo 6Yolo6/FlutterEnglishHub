@@ -130,9 +130,12 @@ class MyApp extends StatelessWidget {
           ],
           title: 'English Hub',
           debugShowCheckedModeBanner: false,
-          locale: Locale('en', 'US'), // 设置初始语言为英语
+          // 设置初始语言为英语
+          locale: Locale('en', 'US'), 
+          // locale: Locale('zh', 'CN'),
           translations: Translate(),
           theme: lightTheme,
+          // theme: darkTheme,
           home: Builder(
             builder: (context) {
               setShouldShowFloatingButton(true, context);

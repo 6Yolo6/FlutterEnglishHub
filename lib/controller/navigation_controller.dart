@@ -1,3 +1,4 @@
+import 'package:flutter_english_hub/page/vocabulary.dart';
 import 'package:flutter_english_hub/page/word_review/word_review.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class NavigationController extends GetxController with SingleGetTickerProviderMi
     } else if (index == 2) {
       // 生词本，笔记
       // Get.to(NotePage(), transition: Transition.fade, duration: Duration(seconds: 1));
-      Get.to(Routes.routes[13].page(), transition: Transition.fade, duration: Duration(seconds: 1));
+      Get.to(() => VocabularyPage(), transition: Transition.fade, duration: Duration(seconds: 1));
     } else if (index == 3) {
       // 跳转学习单词页面，传animationController参数
       Get.to(() => WordReviewPage(animationController: animationController), transition: Transition.fade, duration: Duration(seconds: 1));

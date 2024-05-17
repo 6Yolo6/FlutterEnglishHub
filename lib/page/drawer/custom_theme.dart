@@ -82,21 +82,111 @@ class CustomThemePage extends StatelessWidget {
   }
 }
 
+// // 白天模式
+// ThemeData lightTheme = ThemeData.light().copyWith(
+//   primaryColor: Colors.white,
+//   colorScheme: ThemeData.light().colorScheme.copyWith(
+//     primary: Colors.white,
+//     secondary: Colors.blue, // 替代accentColor
+//     onPrimary: Colors.black,
+//   ),
+//   appBarTheme: AppBarTheme(
+//     systemOverlayStyle: SystemUiOverlayStyle.dark,
+//     elevation: 0,
+//     backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+//     iconTheme: const IconThemeData(color: Colors.black),
+//   ),
+//   scaffoldBackgroundColor: ThemeData.light().scaffoldBackgroundColor,
+//   backgroundColor: Colors.white,
+//   iconTheme: const IconThemeData(
+//     color: Colors.black,
+//   ),
+//   primaryIconTheme: const IconThemeData(
+//     color: Colors.black,
+//   ),
+//   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+//     selectedItemColor: Colors.blue,
+//     unselectedItemColor: Colors.grey,
+//     backgroundColor: Colors.white,
+//   ),
+//   tabBarTheme: TabBarTheme(
+//     labelColor: Colors.blue, // 选中的Tab的颜色
+//     unselectedLabelColor: Colors.black, // 未选中的Tab的颜色
+//   ),
+//   textTheme: ThemeData.light().textTheme.apply(
+//     bodyColor: Colors.black,
+//     displayColor: Colors.black,
+//   ),
+//   inputDecorationTheme: InputDecorationTheme(
+//     border: OutlineInputBorder(
+//       borderSide: BorderSide(color: Colors.blue),
+//     ),
+//     focusedBorder: OutlineInputBorder(
+//       borderSide: BorderSide(color: Colors.blue),
+//     ),
+//   ),
+// );
+
+// // 夜间模式
+// ThemeData darkTheme = ThemeData.dark().copyWith(
+//   appBarTheme: AppBarTheme(
+//     systemOverlayStyle: SystemUiOverlayStyle.light,
+//     elevation: 0,
+//     backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+//     iconTheme: const IconThemeData(color: Colors.white),
+//   ),
+//   scaffoldBackgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+//   backgroundColor: Colors.black,
+//   iconTheme: const IconThemeData(
+//     color: Colors.white,
+//   ),
+//   primaryIconTheme: const IconThemeData(
+//     color: Colors.white,
+//   ),
+//   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+//     selectedItemColor: Colors.tealAccent,
+//     unselectedItemColor: Colors.blue,
+//     backgroundColor: Colors.black,
+//   ),
+//   tabBarTheme: TabBarTheme(
+//     labelColor: Colors.tealAccent, // 选中的Tab的颜色
+//     unselectedLabelColor: Colors.white, // 未选中的Tab的颜色
+//   ),
+//   textTheme: ThemeData.dark().textTheme.apply(
+//     bodyColor: Colors.white,
+//     displayColor: Colors.white,
+//   ),
+//   colorScheme: ThemeData.dark().colorScheme.copyWith(
+//     primary: Colors.black,
+//     secondary: Colors.tealAccent, // 替代accentColor
+//     onPrimary: Colors.white,
+//   ),
+//   inputDecorationTheme: InputDecorationTheme(
+//     border: OutlineInputBorder(
+//       borderSide: BorderSide(color: Colors.tealAccent),
+//     ),
+//     focusedBorder: OutlineInputBorder(
+//       borderSide: BorderSide(color: Colors.tealAccent),
+//     ),
+//   ),
+// );
+
 // 白天模式
 ThemeData lightTheme = ThemeData.light().copyWith(
-  primaryColor: Colors.white,
+  shadowColor: Colors.black38,
+  primaryColor: Colors.blue,
   colorScheme: ThemeData.light().colorScheme.copyWith(
-    primary: Colors.white,
-    secondary: Colors.blue, // 替代accentColor
+    primary: Colors.blue,
+    secondary: Colors.blueAccent, // 替代accentColor
     onPrimary: Colors.black,
   ),
   appBarTheme: AppBarTheme(
     systemOverlayStyle: SystemUiOverlayStyle.dark,
     elevation: 0,
-    backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+    backgroundColor: Colors.white, // AppBar的背景颜色
     iconTheme: const IconThemeData(color: Colors.black),
   ),
-  scaffoldBackgroundColor: ThemeData.light().scaffoldBackgroundColor,
+  scaffoldBackgroundColor: Colors.white,
   backgroundColor: Colors.white,
   iconTheme: const IconThemeData(
     color: Colors.black,
@@ -106,7 +196,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     selectedItemColor: Colors.blue,
-    unselectedItemColor: Colors.tealAccent,
+    unselectedItemColor: Colors.grey,
     backgroundColor: Colors.white,
   ),
   tabBarTheme: TabBarTheme(
@@ -129,13 +219,15 @@ ThemeData lightTheme = ThemeData.light().copyWith(
 
 // 夜间模式
 ThemeData darkTheme = ThemeData.dark().copyWith(
+  shadowColor: Colors.grey[500],
+  primaryColor: Colors.black,
   appBarTheme: AppBarTheme(
     systemOverlayStyle: SystemUiOverlayStyle.light,
     elevation: 0,
-    backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+    backgroundColor: Colors.black, // AppBar的背景颜色
     iconTheme: const IconThemeData(color: Colors.white),
   ),
-  scaffoldBackgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+  scaffoldBackgroundColor: Colors.black,
   backgroundColor: Colors.black,
   iconTheme: const IconThemeData(
     color: Colors.white,
@@ -145,18 +237,19 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     selectedItemColor: Colors.tealAccent,
-    unselectedItemColor: Colors.blue,
+    unselectedItemColor: Colors.grey,
     backgroundColor: Colors.black,
   ),
   tabBarTheme: TabBarTheme(
     labelColor: Colors.tealAccent, // 选中的Tab的颜色
-    unselectedLabelColor: Colors.white, // 未选中的Tab的颜色
+    unselectedLabelColor: Colors.grey, // 未选中的Tab的颜色
   ),
   textTheme: ThemeData.dark().textTheme.apply(
     bodyColor: Colors.white,
     displayColor: Colors.white,
   ),
   colorScheme: ThemeData.dark().colorScheme.copyWith(
+    primary: Colors.teal,
     secondary: Colors.tealAccent, // 替代accentColor
     onPrimary: Colors.white,
   ),

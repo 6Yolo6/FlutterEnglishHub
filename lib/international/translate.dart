@@ -46,6 +46,16 @@ class Translate extends Translations {
           'Custom Theme': 'Custom Theme',
           'My Voiceover': 'My Voiceover',
           'Hot Voiceover': 'Hot Voiceover',
+          'No Data': 'No Data',
+          'Change': 'Change',
+          'Create': 'Create',
+          'Start Learning': 'Start Learning',
+          'Learned': 'Learned',
+          'Reviewed': 'Reviewed',
+          'Mastered': 'Mastered',
+          'RemainDays': 'RemainDays',
+          'Change Word Book': 'Change Word Book',
+          'Add Word Book': 'Add Word Book',
         },
         'zh_CN': {
           'hello': '你好',
@@ -89,6 +99,16 @@ class Translate extends Translations {
           'Custom Theme': '自定义主题',
           'My Voiceover': '我的配音',
           'Hot Voiceover': '热门配音',
+          'No Data': '暂无数据',
+          'Change': '更换',
+          'Create': '新建',
+          'Start Learning': '开始学习',
+          'Learned': '已新学',
+          'Reviewed': '已复习',
+          'Mastered': '已掌握',
+          'RemainDays': '剩余天数',
+          'Change Word Book': '更换单词书',
+          'Add Word Book': '添加单词书',
         }
       };
 }

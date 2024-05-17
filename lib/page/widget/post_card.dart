@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_english_hub/model/Articles.dart';
+import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({
-    super.key,
-  });
+  final Articles article;
+
+  const PostCard({super.key, required this.article});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'How to use design thinking in your projects',
+                      article.title,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18.sp,
@@ -35,18 +36,17 @@ class PostCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
+                    SizedBox(height: 8.h),
                     Text(
-                      'At some point, you would want to ..',
+                      article.description,
                       style: TextStyle(
                         color: Color(0xFFA8A8A8),
                         fontSize: 14.sp,
                         fontFamily: 'Work Sans',
                         fontWeight: FontWeight.w500,
                       ),
-                    )
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
@@ -57,7 +57,13 @@ class PostCard extends StatelessWidget {
                     margin: EdgeInsets.only(left: 4, bottom: 6),
                     width: 80.w,
                     height: 80.w,
-                    decoration: BoxDecoration(color: Color(0xFF525252)),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF525252),
+                      image: DecorationImage(
+                              image: NetworkImage(article.urlToImage),
+                              fit: BoxFit.cover,
+                            )
+                    ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -77,9 +83,7 @@ class PostCard extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(
-            height: 24.h,
-          ),
+          SizedBox(height: 24.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -88,7 +92,7 @@ class PostCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Author Name',
+                    article.author ?? 'Unknown Author',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 14.sp,
@@ -98,7 +102,7 @@ class PostCard extends StatelessWidget {
                   ),
                   SizedBox(height: 2.sp),
                   Text(
-                    'May 20 · 5 min read',
+                    '发布于: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(article.publishTime)}',
                     style: TextStyle(
                       color: Color(0xFFA8A8A8),
                       fontSize: 12.sp,
@@ -111,15 +115,9 @@ class PostCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.bookmark_border,
-                    size: 24.w,
-                  ),
+                  Icon(Icons.bookmark_border, size: 24.w),
                   SizedBox(width: 24.sp),
-                  Icon(
-                    Icons.more_vert,
-                    size: 24.w,
-                  ),
+                  Icon(Icons.more_vert, size: 24.w),
                 ],
               ),
             ],

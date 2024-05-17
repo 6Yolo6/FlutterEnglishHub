@@ -1,6 +1,7 @@
 import 'package:flutter_english_hub/main.dart';
 import 'package:flutter_english_hub/page/drawer/custom_language.dart';
 import 'package:flutter_english_hub/page/drawer/favorite.dart';
+import 'package:flutter_english_hub/page/drawer/user_profile.dart';
 import 'package:flutter_english_hub/page/navigation/custom_bottom_navigation_bar.dart';
 import 'package:flutter_english_hub/page/drawer/custom_theme.dart';
 import 'package:flutter_english_hub/controller/home_drawer_controller.dart';
@@ -125,6 +126,9 @@ class _HomeNavigationState extends State<HomeNavigation>
             transition: Transition.fade, duration: Duration(seconds: 1));
       case DrawerIndex.Favorite:
         Get.to(() => FavoritePage(),
+            transition: Transition.fade, duration: Duration(seconds: 1));
+      case DrawerIndex.About:
+        Get.to(() => UserProfilePage(),
             transition: Transition.fade, duration: Duration(seconds: 1));
       default:
         break;

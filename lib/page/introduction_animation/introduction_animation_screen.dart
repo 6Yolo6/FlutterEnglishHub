@@ -50,8 +50,9 @@ class _IntroductionAnimationScreenState
     print("动画控制器的值: ${_animationController!.value}");
     return Scaffold(
       // 使用RGB(253,251,228)
-      backgroundColor: Color(0xffFDFBE4),
-      // backgroundColor: Color(0xffF7EBE1),
+      backgroundColor: 
+      // Get.theme.scaffoldBackgroundColor,
+       Color(0xffFDFBE4),
       body: ClipRect(
         child: Stack(
           children: [
@@ -74,6 +75,7 @@ class _IntroductionAnimationScreenState
               onBackClick: _onBackClick, // 设置返回按钮的回调
               onSkipClick: _onSkipClick, // 设置跳过按钮的回调
               onGuestClick: _onGuestClick, // 设置游客按钮的回调
+              onLanguageClick: () => _showLanguageDialog(context), // 设置语言按钮的回调
               animationController: _animationController!,
             ),
             CenterNextButton(
@@ -85,6 +87,32 @@ class _IntroductionAnimationScreenState
       ),
     );
   }
+
+  // 显示语言选择对话框
+  void _showLanguageDialog(BuildContext context) {
+  final List<Locale> languages = [
+    Locale('en', 'US'),
+    Locale('zh', 'CN'),
+  ];
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return SimpleDialog(
+        title: Text('选择语言'),
+        children: languages.map((locale) {
+          return SimpleDialogOption(
+            onPressed: () {
+              Get.updateLocale(locale);
+              Get.back();
+            },
+            child: Text(locale.languageCode),
+          );
+        }).toList(),
+      );
+    },
+  );
+}
 
   // 点击跳过按钮
   void _onSkipClick() {

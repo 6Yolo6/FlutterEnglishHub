@@ -96,6 +96,13 @@ dependencies:
   share_plus: ^9.0.0
   # 下拉刷新
   pull_to_refresh: ^2.0.0
+  # 视频缩略图
+  video_thumbnail: ^0.5.3
+  # 打开链接
+  url_launcher: ^6.2.6
+  flutter_html: ^3.0.0-beta.2
+  html: ^0.15.4
+  image_picker: ^1.1.1
   
 
 
@@ -130,6 +137,8 @@ flutter:
   assets:
     - assets/images/
     - assets/images/word_book/
+    - assets/images/swiper/
+    - assets/icons/
     - assets/design_course/
     - assets/fitness_app/
     - assets/hotel/

@@ -29,21 +29,26 @@ class TitleView extends StatelessWidget {
             child: Container(
               child: Padding(
                 padding: const EdgeInsets.only(left: 24, right: 24),
-                child: Row(
+                child: Column(
                   children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        titleTxt,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                          fontFamily: AppTheme.fontName,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                          color: AppTheme.lightText,
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0), // 添加边距
+                            child: Text(
+                              titleTxt,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontFamily: AppTheme.fontName,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                letterSpacing: 0.5,
+                                color: Get.theme.colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
                     InkWell(
                       highlightColor: Colors.transparent,
                       borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -77,7 +82,21 @@ class TitleView extends StatelessWidget {
                           ],
                         ),
                       ),
-                    )
+                    ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 11, right: 14, top: 8, bottom: 8),
+                      child: Container(
+                        height: 2,
+                        decoration: BoxDecoration(
+                          color:
+                              Get.theme.colorScheme.secondary.withOpacity(0.5),
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

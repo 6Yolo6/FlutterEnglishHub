@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_english_hub/controller/daily_sentence_controller.dart';
 import 'package:flutter_english_hub/controller/voiceover_controller.dart';
 import 'package:flutter_english_hub/model/DailySentence.dart';
 import 'package:flutter_english_hub/model/Voiceover.dart';

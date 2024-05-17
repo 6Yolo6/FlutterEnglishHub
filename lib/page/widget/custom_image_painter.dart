@@ -1,33 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'dart:math' as math;
 
-class CustomImagePainter extends CustomPainter {
+class CustomImagePainter extends StatelessWidget {
   final String bookName;
   final String imagePath;
+  final double width;
+  final double height;
 
-  CustomImagePainter({required this.bookName, required this.imagePath});
+  CustomImagePainter({
+    required this.bookName, 
+    required this.imagePath, 
+    this.width = 70.0, 
+    this.height = 150.0,
+  });
 
   @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.orange
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: bookName,
-        style: TextStyle(color: Colors.white, fontSize: 14),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Image.asset(
+          imagePath,
+          width: width,
+          height: height,
+          fit: BoxFit.contain,
+        ),
+        Container(
+          width: width,
+          height: height,
+          alignment: Alignment.topCenter, 
+          padding: EdgeInsets.only(top: 4), 
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.transparent, Colors.black54],
+              begin: Alignment.bottomCenter, 
+              end: Alignment.topCenter, 
+            ),
+          ),
+          child: Text(
+            bookName,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  offset: Offset(1, 1),
+                  color: Colors.black,
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
     );
-
-    textPainter.layout(minWidth: size.width, maxWidth: size.width);
-    textPainter.paint(canvas, Offset(0, size.height / 2 - textPainter.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(CustomImagePainter oldDelegate) {
-    return false;
   }
 }

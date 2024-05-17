@@ -13,7 +13,6 @@ class AuthService extends GetxService {
   // 监听登录状态
   RxBool isAuthenticated = false.obs;
 
-
   void showFeedback(String type, String message, Color backgroundColor) {
     Get.snackbar(type, message,
         snackPosition: SnackPosition.BOTTOM,
@@ -149,11 +148,43 @@ class AuthService extends GetxService {
     print('是否已登录: ${isAuthenticated.value}');
   }
 
+  Future<void> fetchUserById() async {
+    try {
+      final response = await apiService.dio.get('user/getById');
+      if (response.statusCode == 200) {
+        user.value = User.fromJson(response.data['data']);
+        storageService.saveUser(user.value!);
+      } else {
+        showFeedback('Error', 'Failed to fetch user data', Colors.red);
+      }
+    } catch (e) {
+      showFeedback('Error', 'An error occurred', Colors.red);
+    }
+  }
+
   // 退出登录
   void logout() {
     storageService.clearToken();
     storageService.clearUser();
     isAuthenticated.value = false;
     Get.offAllNamed('/login');
+  }
+
+  // 更新用户信息
+  Future<User> updateUser(Map<String, String> updates) async {
+    try {
+      final response = await apiService.dio.post('user/updateUser',
+       data: updates);
+
+      if (response.statusCode == 200) {
+  
+        var userData = response.data['data'];
+        return User.fromJson(userData);
+      } else {
+        throw Exception('Failed to update user');
+      }
+    } catch (e) {
+      throw Exception('An error occurred: $e');
+    }
   }
 }

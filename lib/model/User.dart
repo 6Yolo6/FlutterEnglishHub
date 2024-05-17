@@ -6,7 +6,7 @@ class User {
   final String? email;
   final String? telephone;
   final String? sex;
-  final String avatar;
+  late final String avatar;
 
   User({
     required this.id,

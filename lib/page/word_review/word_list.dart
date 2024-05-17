@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_english_hub/model/WordInfo.dart';
+import 'package:flutter_english_hub/controller/word_controller.dart';
+import 'package:flutter_english_hub/model/Word.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 class WordListPage extends StatefulWidget {
   final int wordBookId;
 
@@ -12,8 +14,12 @@ class WordListPage extends StatefulWidget {
 }
 
 class _WordListPageState extends State<WordListPage> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  late WordController wordController = Get.find<WordController>();
   // 单词列表
-  List<WordInfo> words = [];
+  List<Word> words = [];
 
   // 用于记录每个单词的释义是否展开
   List<bool> expanded = [];
@@ -30,98 +36,29 @@ class _WordListPageState extends State<WordListPage> {
   @override
   void initState() {
     super.initState();
-    loadWords().then((loadedWords) {
-      setState(() {
-        words = loadedWords;
-        // 默认所有单词释义都是收起状态
-        expanded = List.generate(words.length, (index) => false);
-      });
+  loadWords();
+
+  }
+Future<void> _loadMoreWords() async {
+  List<Word> loadedWords = await wordController.getByWordBookId(widget.wordBookId);
+  print('更多数据：$loadedWords');
+  if (mounted) { 
+    setState(() {
+      words.addAll(loadedWords);
+      expanded.addAll(List.generate(loadedWords.length, (index) => false));
+    });
+  }
+  _refreshController.loadComplete();
+}
+
+  Future<void> loadWords() async {
+    List<Word> loadedWords = await wordController.getByWordBookId(widget.wordBookId);
+    setState(() {
+      words.addAll(loadedWords);
+      expanded.addAll(List.generate(loadedWords.length, (index) => false));
     });
   }
 
- Future<List<WordInfo>> loadWords() async {
-  // 发送 HTTP 请求
-  // final response = await http.get('http://your-backend.com/words');
-
-  // 检查响应状态码
-  // if (response.statusCode == 200) {
-  //   // 如果服务器返回 200 OK，解析响应体为 JSON
-  //   List<dynamic> responseBody = json.decode(response.body);
-
-  //   // 将 JSON 数组转换为单词对象列表
-    
-
-  //   return words;
-  // } else {
-  //   // 如果响应状态码不是 200，抛出异常
-  //   throw Exception('Failed to load words');
-  // }
-
-  // 测试数据WordInfo
-  List<WordInfo> words = [
-    WordInfo(
-      word: 'abandon',
-      phoneticUk: 'əˈbændən',
-      phoneticUs: 'əˈbændən',
-      definition: 'v. 放弃；抛弃；离弃；遗弃',
-    ),
-    WordInfo(
-      word: 'abbreviation',
-      phoneticUk: 'əˌbri:viˈeɪʃn',
-      phoneticUs: 'əˌbri:viˈeɪʃn',
-      definition: 'n. 缩写；缩略；缩写词',
-    ),
-    WordInfo(
-      word: 'abolish',
-      phoneticUk: 'əˈbɒlɪʃ',
-      phoneticUs: 'əˈbɑ:lɪʃ',
-      definition: 'v. 废除；废止；取消；革除',
-    ),
-    WordInfo(
-      word: 'abolition',
-      phoneticUk: 'ˌæbəˈlɪʃn',
-      phoneticUs: 'ˌæbəˈlɪʃn',
-      definition: 'n. 废除；废止；废除运动',
-    ),
-    WordInfo(
-      word: 'abort',
-      phoneticUk: 'əˈbɔ:t',
-      phoneticUs: 'əˈbɔ:rt',
-      definition: 'v. 流产；中止；夭折；使中止',
-    ),
-    WordInfo(
-      word: 'abortion',
-      phoneticUk: 'əˈbɔ:ʃn',
-      phoneticUs: 'əˈbɔ:ʃn',
-      definition: 'n. 流产；堕胎；失败；夭折',
-    ),
-    WordInfo(
-      word: 'above',
-      phoneticUk: 'əˈbʌv',
-      phoneticUs: 'əˈbʌv',
-      definition: 'prep. 在…之上；高于；超过；在…上面',
-    ),
-    WordInfo(
-      word: 'abreast',
-      phoneticUk: 'əˈbrest',
-      phoneticUs: 'əˈbrest',
-      definition: 'adv. 并列；并排；并肩',
-    ),
-    WordInfo(
-      word: 'abroad',
-      phoneticUk: 'əˈbrɔ:d',
-      phoneticUs: 'əˈbrɔ:d',
-      definition: 'adv. 在国外；到国外；在传播；在流传',
-    ),
-    WordInfo(
-      word: 'abrupt',
-      phoneticUk: 'əˈbrʌpt',
-      phoneticUs: 'əˈbrʌpt',
-      definition: 'adj. 突然的；唐突的；陡峭的；生硬的',
-    ),
-  ];
-  return words;
-}
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +81,8 @@ class _WordListPageState extends State<WordListPage> {
                 // 搜索框代理
                 delegate: WordSearchDelegate(
                   words,
+                  showDefinitions: showDefinitions,
+                  showPhonetics: showPhonetics,
                   onWordTap: (word) {
                     final index = words.indexWhere((element) => element.word == word);
                     if (index != -1) {
@@ -232,7 +171,12 @@ class _WordListPageState extends State<WordListPage> {
           ),
         ],
       ),
-      body: ListView.builder(
+      body: SmartRefresher(
+      enablePullDown: false,
+      enablePullUp: true,
+      controller: _refreshController,
+      onLoading: _loadMoreWords,
+      child: ListView.builder(
         itemCount: words.length,
         itemBuilder: (context, index) {
           return ListTile(
@@ -248,13 +192,21 @@ class _WordListPageState extends State<WordListPage> {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      showPhonetics ? Text('/ɪɡˈzæmpəl/') : null,
-                      showDefinitions ? Text('n. 例子；样品；实例') : null,
+                      if (showPhonetics)
+                        Row(
+                          children: [
+                            Text(words[index].phoneticUk),
+                            Text(' / '),
+                            Text(words[index].phoneticUs),
+                          ],
+                        ),
+                      if (showDefinitions) Text(words[index].definition),
                     ].whereType<Widget>().toList(),
                   )
                 : null,
           );
         },
+      ),
       ),
     );
   }
@@ -262,10 +214,13 @@ class _WordListPageState extends State<WordListPage> {
 
 // 搜索框代理，继承自SearchDelegate，用于实现搜索功能
 class WordSearchDelegate extends SearchDelegate<String> {
-  final List<WordInfo> words;
+  final List<Word> words;
   final Function(String) onWordTap;
+  final bool showDefinitions;
+  final bool showPhonetics;
 
-  WordSearchDelegate(this.words, {required this.onWordTap});
+  WordSearchDelegate(this.words, {required this.showDefinitions,
+    required this.showPhonetics, required this.onWordTap});
 
   // 搜索框右侧的清除按钮
   @override
@@ -302,7 +257,7 @@ class WordSearchDelegate extends SearchDelegate<String> {
   @override
 Widget buildSuggestions(BuildContext context) {
   // 模糊匹配单词，大小写不敏感
-  List<WordInfo> matchQuery = words
+  List<Word> matchQuery = words
       .where((word) => word.word.toLowerCase().contains(query.toLowerCase()))
       .toList();
 
@@ -315,18 +270,24 @@ Widget buildSuggestions(BuildContext context) {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(word.phoneticUk), // 美音标
-            Text(word.phoneticUs), // 英音标
-            Text(word.definition), // 释义
+            // Text(word.phoneticUk), // 美音标
+            // Text(word.phoneticUs), // 英音标
+            // // Text(word.definition), // 释义
+            // if (isExpanded) Text(word.definition),
+              if (showPhonetics) Text(word.phoneticUk),
+              if (showPhonetics) Text(word.phoneticUs),
+              if (showDefinitions) Text(word.definition),
           ],
         ),
         onTap: () {
           // 匹配到的单词，query为用户输入的搜索词
-          query = word.word;
+          // query = word.word;
           // 点击单词回调，切换单词释义的展开/收起状态
-          onWordTap(query);
+          // onWordTap(query);
           // 显示搜索结果
           // showResults(context);
+          // 点击单词，切换对应的释义显示状态
+          onWordTap(word.word);
         },
       );
     },

@@ -1,24 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/parser.dart' as htmlParser;
 
 class TranslationPage extends StatefulWidget {
   const TranslationPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _TranslationPageState createState() => _TranslationPageState();
 }
 
 class _TranslationPageState extends State<TranslationPage> {
+  final TextEditingController _controller = TextEditingController();
+  bool _isEnglishToChinese = true;
+  String _translatedText = '';
 
-    @override
+  Future<void> _translate(String text) async {
+    try {
+      final response = await Dio().get(
+        'https://www.youdao.com/w/$text',
+      );
+
+      if (response.statusCode == 200) {
+        var document = htmlParser.parse(response.data);
+        var transContainer = document.querySelector('.trans-container');
+
+        if (transContainer != null) {
+          if (_isEnglishToChinese) {
+            var ulElement = transContainer.querySelector('ul');
+            if (ulElement != null) {
+              _translatedText = ulElement.children.map((li) => li.text).join('\n');
+            } else {
+              _translatedText = '未找到翻译结果';
+            }
+          } else {
+            var pElement = transContainer.querySelectorAll('p span');
+            if (pElement.isNotEmpty) {
+              _translatedText = pElement.map((span) => span.text).join('\n');
+            } else {
+              _translatedText = '未找到翻译结果';
+            }
+          }
+        } else {
+          _translatedText = '未找到翻译结果';
+        }
+      } else {
+        _translatedText = '翻译失败，请稍后重试。';
+      }
+    } catch (e) {
+      print('e: $e');
+      _translatedText = '翻译失败，请稍后重试。';
+    }
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Translation'),
+        title: Text('翻译'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: '请输入要翻译的文本',
+              ),
+              onSubmitted: (text) {
+                _translate(text);
+              },
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _translate(_controller.text);
+                  },
+                  child: Text('翻译'),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEnglishToChinese = !_isEnglishToChinese;
+                    });
+                  },
+                  child: Text(_isEnglishToChinese ? '英 -> 中' : '中 -> 英'),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Text(
+              '翻译结果：',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Html(data: _translatedText),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
   // @override
   // Widget build(BuildContext context) {
@@ -171,7 +264,7 @@ class _TranslationPageState extends State<TranslationPage> {
   //     ),
   //   );
   // }
-}
+
 
 class Section extends StatelessWidget {
   final Widget child;

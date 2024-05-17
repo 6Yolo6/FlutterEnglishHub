@@ -226,7 +226,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        splashColor: Colors.grey.withOpacity(0.1),
+        splashColor: Get.theme.colorScheme.secondary
+        .withOpacity(0.1),
         highlightColor: Colors.transparent,
         onTap: () {
           navigationtoScreen(listData.index!);
@@ -261,13 +262,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
                           height: 24,
                           child: Image.asset(listData.imageName,
                               color: widget.screenIndex == listData.index
-                                  ? Colors.blue
-                                  : AppTheme.nearlyBlack),
+                                  ? Get.theme.colorScheme.secondary
+                                  : Get.theme.colorScheme.onPrimary),
                         )
                       : Icon(listData.icon?.icon,
                           color: widget.screenIndex == listData.index
-                              ? Colors.blue
-                              : AppTheme.nearlyBlack),
+                              ? Get.theme.colorScheme.secondary
+                              : Get.theme.colorScheme.onPrimary),
                   const Padding(
                     padding: EdgeInsets.all(4.0),
                   ),
@@ -277,8 +278,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: widget.screenIndex == listData.index
-                          ? Colors.black
-                          : AppTheme.nearlyBlack,
+                          ? Get.theme.primaryColor
+                          : Get.theme.textTheme.headline6!.color,
                     ),
                     textAlign: TextAlign.left,
                   ),

@@ -41,6 +41,7 @@ class StorageService extends GetxService {
   User? getUser() {
     var userData = _storage.read('user');
     if (userData != null) {
+      print('userData: $userData');
       return User.fromJson(userData);
     }
     return null;

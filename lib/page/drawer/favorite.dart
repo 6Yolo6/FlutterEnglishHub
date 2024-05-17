@@ -74,10 +74,10 @@ class Favor extends StatelessWidget {
       case 1:
         return const FavorDailySentence();  // 这个组件应该自己处理滚动
       case 3:
-        return ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) => const PostCard(),
-        );
+        // return ListView.builder(
+        //   itemCount: 6,
+        //   itemBuilder: (context, index) => const PostCard(),
+        // );
       default:
         return Container();  // 为其他情况提供默认空容器
     }
